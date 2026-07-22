@@ -23,12 +23,16 @@ table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;bor
 @media(max-width:900px){.shell{grid-template-columns:1fr}.cards,.grid,.checks,.info-grid,.review-center,.detail-grid,.case-facts,.process,.case-toolbar,.case-search-row,.confirm-summary,.approval-layout,.venue-card,.location-card,.director-review-grid{grid-template-columns:1fr}.flow-grid{grid-template-columns:1fr}.flow-arrow{transform:rotate(0deg)}.confirm-summary .summary-card:nth-child(n+3),.director-review-grid .summary-card:nth-child(n+3){grid-column:auto}.approval-summary{position:static}.item{grid-template-columns:1fr}.top,.head,.case-summary-head{align-items:flex-start;flex-direction:column}.hero:after{display:none}.review-center{grid-template-columns:1fr}.case-search-row{justify-content:stretch}.filterbar{grid-template-columns:repeat(auto-fit,minmax(110px,1fr))}.fee-line{grid-template-columns:1fr auto;gap:4px 10px}.fee-head{display:none}.fee-item-name{grid-column:1;grid-row:1}.fee-amount{grid-column:2;grid-row:1}.fee-unit{grid-column:1;grid-row:2;text-align:left;color:var(--muted)}.fee-qty{grid-column:2;grid-row:2;text-align:right;color:var(--muted)}.fee-line.total span{grid-column:1}.fee-line.total b{grid-column:2}.process-flow{min-width:760px}.process{overflow-x:auto}}
 </style>
 <style>
+.settings-picker{border:1px solid var(--line);border-radius:8px;background:#fbfdfe;padding:14px;margin-bottom:16px;display:grid;grid-template-columns:minmax(260px,420px) 1fr;gap:12px;align-items:end}
+.settings-picker label{margin:0}
+.settings-picker p{margin:0;align-self:center}
+.settings-save-actions.hide{display:none!important}
 .fee-detail-layout{display:grid;grid-template-columns:minmax(0,3fr) minmax(320px,2fr);gap:14px;align-items:start}
 .fee-detail-main,.fee-detail-side{display:grid;gap:12px;min-width:0}
 .fee-detail-side .fee-summary-card{position:sticky;top:14px}
 .fee-summary-card .notice{margin-top:4px}
 .document-card{border:1px solid var(--line);border-radius:8px;background:#fbfdfe;padding:14px;display:grid;gap:10px}.document-card h4{margin:0;color:#16324a}.document-card details{border-top:1px solid var(--line);padding-top:10px}
-@media(max-width:900px){.fee-detail-layout{grid-template-columns:1fr}.fee-detail-side .fee-summary-card{position:static}}
+@media(max-width:900px){.settings-picker,.fee-detail-layout{grid-template-columns:1fr}.fee-detail-side .fee-summary-card{position:static}}
 </style>
 </head>
 <body>
@@ -323,16 +327,31 @@ table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;bor
 <section id="settings" class="view admin-view">
   <section class="panel">
     <div class="head"><h2>系統設定</h2><button type="button" id="logoutBtn" class="ghost">登出後台</button></div>
+    <section class="settings-picker">
+      <label>請選擇要維護的設定項目
+        <select id="settingsSectionSelect">
+          <option value="pricing">收費標準設定</option>
+          <option value="venueStatus">場地狀態設定</option>
+          <option value="venueIntro">場地介紹管理</option>
+          <option value="location">交通與位置管理</option>
+          <option value="schoolCalendar">學校行事曆設定</option>
+          <option value="roomBlock">場地不外借管理</option>
+          <option value="notification">通知設定</option>
+          <option value="consumables">耗材設定</option>
+        </select>
+      </label>
+      <p class="muted" id="settingsSectionHint">請先選擇要維護的設定項目，下方會顯示對應內容。</p>
+    </section>
     <div class="grid">
-      <section class="detail-section wide">
+      <section class="detail-section wide" data-settings-section="pricing">
         <h3>收費標準設定</h3>
         <div class="grid" id="rateSettings"></div>
       </section>
-      <section class="detail-section wide">
+      <section class="detail-section wide" data-settings-section="venueStatus">
         <h3>場地狀態設定</h3>
         <div class="grid" id="venueStatusSettings"></div>
       </section>
-      <section class="detail-section wide">
+      <section class="detail-section wide" data-settings-section="schoolCalendar">
         <h3>學校行事曆設定</h3>
         <p class="muted">用於判定工作人員值班費。未設定日期預設為週一至週五上班日、週六日非上班日；若有補班或校定放假，請在此新增特殊日期。</p>
         <form id="schoolCalendarForm" class="grid">
@@ -343,28 +362,34 @@ table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;bor
         </form>
         <div id="schoolCalendarSettings" class="list"></div>
       </section>
-      <section class="detail-section wide">
+      <section class="detail-section wide" data-settings-section="consumables">
         <h3>耗材項目管理</h3>
         <p class="muted">管理前台 Step 2 顯示的耗材名稱、說明、單價與是否啟用。</p>
         <div class="grid" id="consumableSettings"></div>
       </section>
-      <section class="detail-section wide">
+      <section class="detail-section wide" data-settings-section="venueIntro">
         <h3>場地介紹管理</h3>
         <p class="muted">管理前台「場地介紹」頁面的文字內容與場地圖片。</p>
         <div id="venueIntroSettings" class="venue-list"></div>
       </section>
-      <section class="detail-section wide">
+      <section class="detail-section wide" data-settings-section="location">
         <h3>交通與位置管理</h3>
         <p class="muted">管理前台「場地介紹」頁面底部的地址與交通路線圖。</p>
         <div id="locationSettings" class="venue-list"></div>
       </section>
-      <section class="detail-section wide">
+      <section class="detail-section wide" data-settings-section="notification">
         <h3>通知設定</h3>
         <p class="muted">管理承辦人與主任 Email 通知收件資訊。</p>
         <div id="notificationSettings" class="grid"></div>
       </section>
+      <section class="detail-section wide" data-settings-section="roomBlock">
+        <h3>場地不外借管理</h3>
+        <p class="muted">場地不外借資料目前由「行事曆」管理，系統設定保留入口避免管理者找不到。</p>
+        <div class="notice">請前往後台「行事曆」頁新增、檢視或刪除場地不外借資料。</div>
+        <div class="actions"><button type="button" class="primary" id="goRoomBlockSettingsBtn">前往場地不外借管理</button></div>
+      </section>
     </div>
-    <div class="actions" style="margin-top:16px">
+    <div class="actions settings-save-actions" style="margin-top:16px">
       <button type="button" class="primary" id="saveSettingsBtn">儲存設定</button>
       <button type="button" class="ghost danger" id="resetSettingsBtn">回復預設值</button>
     </div>
@@ -519,6 +544,10 @@ let savedApprovalSignatures=new Map();
 const feeAdjustmentItems=["場地租金","清潔費","場佈費用","個人防護耗材","麻藥","氣腹氣體","麻醉機暨氣體使用費","工作人員基本值班費","超時值班費","其他費用"];
 const pendingStatuses=["已送件","承辦審核中","待主任核定","承辦修正中","待補件","待取消審核"];
 const caseFilterOptions=["全部","待承辦審核","承辦審核中","待主任核准","承辦修正中","待繳費","已繳費","活動完成","已結案","已退件","待取消審核","申請者取消"];
+const settingsSectionKey="shutien-settings-section-v1";
+const settingsSectionHints={pricing:"維護場地租借費、清潔費、場佈費與工作人員值班費。",venueStatus:"設定各場地是否可借用，會同步影響前台申請表。",venueIntro:"維護前台場地介紹文字、場地圖片與顯示順序。",location:"維護前台場地介紹頁面的地址與交通路線圖。",schoolCalendar:"設定補班、校定放假等特殊日期，用於值班費判定。",roomBlock:"新增或刪除指定日期與時段的場地不外借資料。",notification:"維護承辦人與主任 Email，並可寄送測試信。",consumables:"維護耗材名稱、單價、單位、說明與啟用狀態。"};
+const settingsSectionsWithoutGlobalSave=["schoolCalendar","roomBlock","venueIntro","location","notification"];
+const settingsSectionsWithoutReset=["schoolCalendar","roomBlock","venueIntro","location","notification"];
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const pendingActions=new Set();
 let globalLoadingTimers=[];
@@ -562,8 +591,10 @@ function bind(){
  $("#exportBtn").onclick=exportCsv;
  $("#saveSettingsBtn").onclick=saveSystemSettings;
  $("#resetSettingsBtn").onclick=resetSystemSettings;
+ $("#settingsSectionSelect").onchange=e=>selectSettingsSection(e.target.value);
  $("#schoolCalendarForm").onsubmit=saveSchoolCalendarDate;
  $("#blockForm").onsubmit=addRoomBlock;
+ $("#goRoomBlockSettingsBtn").onclick=()=>show("bookingCalendar");
  document.addEventListener("click",e=>{if(!$("#userMenu").contains(e.target))$("#userMenuList").classList.add("hide")});
 }
 function initDefaults(){let d=today();$$('input[name="applyDate"],#blockForm input[name="date"]').forEach(el=>{if(!el.value)el.value=d});renderConsumableOptions();renderPricing();renderRoomOptions();renderApplicationAttachmentFields();renderVenueIntro();showApplyStep();updateApplicationReview();renderBlockList();loadVenueSettings();loadLocationSettings();loadConsumableSettings();loadSchoolCalendarSettings()}
@@ -595,7 +626,9 @@ async function saveSchoolCalendarDate(e){e.preventDefault();let f=new FormData(e
 async function deleteSchoolCalendarDate(calendarDate){if(!confirm("確定刪除此特殊日期設定？"))return;try{let res=await api("deleteSchoolCalendar",{adminToken,calendarDate,actor:"後台管理者"});if(!res.ok)throw new Error(res.error||"學校行事曆刪除失敗");schoolCalendarSettings=normalizeSchoolCalendar(res.data||res.items||[]);renderSchoolCalendarSettings();updateApplicationReview();toast("學校行事曆已刪除")}catch(err){toast(err.message)}}
 function renderPricing(){let venue=$("#venuePriceList"),extra=$("#extraPriceList"),d=dutySettings();if(!venue||!extra)return;venue.innerHTML="<h3>場地租借費（依時間）</h3>"+Object.entries(systemSettings.rooms).map(([name,r])=>`<div class="price-row"><span>${esc(r.label||name)}${r.available?"":"（暫停借用）"}</span><b>${money(r.rate)} / 半天（4 小時內）</b></div>`).join("")+"<h3>清潔費（依次）</h3>"+Object.entries(systemSettings.rooms).map(([name,r])=>`<div class="price-row"><span>${esc(cleaningLabel(name))}</span><b>${money(r.cleaning)}／次</b></div>`).join("");extra.innerHTML=`<h3>耗材項目</h3>${enabledConsumables().map(item=>`<div class="price-row"><span>${esc(item.itemName)}${item.description?`<br><small class="muted">${esc(item.description)}</small>`:""}</span><b>${money(item.price)} / ${esc(item.unit)}</b></div>`).join("")}<h3>其他費用（依次）</h3><div class="price-row"><span>場佈費用（限多功能外科指導手術室）</span><b>${money(systemSettings.fees.setup)}／次</b></div><h3>工作人員值班費</h3><p class="muted">工作人員值班費適用於學校行事曆認定之非上班日、例假日及國定假日。是否為上班日，依國立陽明交通大學行事曆及本系統設定為準。</p><div class="price-row"><span>非上班日基本值班費</span><b>每人每日 ${money(d.base)}</b></div><div class="price-row"><span>固定值班人數</span><b>${d.staff} 人</b></div><div class="price-row"><span>非上班日每日基本值班費合計</span><b>${money(d.base*d.staff)}</b></div><div class="price-row"><span>基本值班時段</span><b>${esc(d.start)}–${esc(d.end)}</b></div><div class="price-row"><span>上班日 ${esc(d.start)}–${esc(d.end)}</span><b>不收基本值班費</b></div><div class="price-row"><span>超出基本時段</span><b>每人每半小時 ${money(d.overtime)}</b></div><p class="muted">未滿半小時，以半小時計。值班費依申請人填寫的借用時間計算，而非僅依活動進行時間計算。</p>`}
 function renderRoomOptions(){let box=$("#roomOptions");if(!box)return;box.innerHTML="<legend>使用場地</legend>"+Object.entries(systemSettings.rooms).map(([name,r])=>`<label><input type="checkbox" name="rooms" value="${esc(name)}" ${r.available?"":"disabled"}>${esc(r.label||name)}${r.available?"":"（暫停借用）"}</label>`).join("")}
-function renderSettings(){let rates=$("#rateSettings"),statuses=$("#venueStatusSettings"),d=dutySettings();if(!rates||!statuses)return;rates.innerHTML=`<section class="detail-section wide"><h3>場地租借費（依時間）</h3><div class="grid">${Object.entries(systemSettings.rooms).map(([name,r])=>`<label>${esc(r.label||name)} / 半天（4 小時內）<input type="number" min="0" data-rate="${esc(name)}" value="${r.rate}"></label>`).join("")}</div></section><section class="detail-section wide"><h3>其他費用（依次）</h3><div class="grid"><label>場佈費用（元／次）<input type="number" min="0" data-fee="setup" value="${systemSettings.fees.setup}"></label>${Object.entries(systemSettings.rooms).map(([name,r])=>`<label>${esc(cleaningLabel(name))}（元／次）<input type="number" min="0" data-cleaning="${esc(name)}" value="${r.cleaning}"></label>`).join("")}</div></section><section class="detail-section wide"><h3>工作人員值班費設定</h3><p class="muted">基本值班費只適用於學校行事曆認定之非上班日。上班日 ${esc(d.start)}–${esc(d.end)} 不收基本值班費；超出基本時段則依借用時間加收超時值班費。</p><p class="muted">借用時間＝工作人員進場 → 場地布置 → 活動進行 → 器材整理 → 場地復原 → 工作人員離場。行事曆衝堂判斷、場地使用時間與值班費均以此時間為準。</p><div class="grid"><label>非上班日基本值班費／人／天<input type="number" min="0" data-fee="dutyBasePerPersonDay" value="${d.base}"></label><label>固定值班人數<input type="number" min="1" data-fee="dutyStaffCount" value="${d.staff}"></label><label>基本值班開始時間<input type="time" data-fee="dutyStart" value="${esc(d.start)}"></label><label>基本值班結束時間<input type="time" data-fee="dutyEnd" value="${esc(d.end)}"></label><label>超時值班費／人／半小時<input type="number" min="0" data-fee="dutyOvertimePerPersonHalfHour" value="${d.overtime}"></label></div></section>`;statuses.innerHTML=Object.entries(systemSettings.rooms).map(([name,r])=>`<label>${esc(r.label||name)}<select data-available="${esc(name)}"><option value="true" ${r.available?"selected":""}>可借用</option><option value="false" ${!r.available?"selected":""}>暫停借用</option></select></label>`).join("");renderSchoolCalendarSettings();renderConsumableSettings();renderVenueIntroSettings();renderLocationSettings();renderNotificationSettings()}
+function currentSettingsSection(){let saved=localStorage.getItem(settingsSectionKey)||"pricing";return settingsSectionHints[saved]?saved:"pricing"}
+function selectSettingsSection(section){let key=settingsSectionHints[section]?section:"pricing";localStorage.setItem(settingsSectionKey,key);let select=$("#settingsSectionSelect"),hint=$("#settingsSectionHint"),saveActions=$(".settings-save-actions"),resetBtn=$("#resetSettingsBtn");if(select&&select.value!==key)select.value=key;if(hint)hint.textContent=settingsSectionHints[key]||"";$$("[data-settings-section]").forEach(el=>el.classList.toggle("hide",el.dataset.settingsSection!==key));if(saveActions)saveActions.classList.toggle("hide",settingsSectionsWithoutGlobalSave.includes(key));if(resetBtn)resetBtn.classList.toggle("hide",settingsSectionsWithoutReset.includes(key))}
+function renderSettings(){let rates=$("#rateSettings"),statuses=$("#venueStatusSettings"),d=dutySettings();if(!rates||!statuses)return;rates.innerHTML=`<section class="detail-section wide"><h3>場地租借費（依時間）</h3><div class="grid">${Object.entries(systemSettings.rooms).map(([name,r])=>`<label>${esc(r.label||name)} / 半天（4 小時內）<input type="number" min="0" data-rate="${esc(name)}" value="${r.rate}"></label>`).join("")}</div></section><section class="detail-section wide"><h3>其他費用（依次）</h3><div class="grid"><label>場佈費用（元／次）<input type="number" min="0" data-fee="setup" value="${systemSettings.fees.setup}"></label>${Object.entries(systemSettings.rooms).map(([name,r])=>`<label>${esc(cleaningLabel(name))}（元／次）<input type="number" min="0" data-cleaning="${esc(name)}" value="${r.cleaning}"></label>`).join("")}</div></section><section class="detail-section wide"><h3>工作人員值班費設定</h3><p class="muted">基本值班費只適用於學校行事曆認定之非上班日。上班日 ${esc(d.start)}–${esc(d.end)} 不收基本值班費；超出基本時段則依借用時間加收超時值班費。</p><p class="muted">借用時間＝工作人員進場 → 場地布置 → 活動進行 → 器材整理 → 場地復原 → 工作人員離場。行事曆衝堂判斷、場地使用時間與值班費均以此時間為準。</p><div class="grid"><label>非上班日基本值班費／人／天<input type="number" min="0" data-fee="dutyBasePerPersonDay" value="${d.base}"></label><label>固定值班人數<input type="number" min="1" data-fee="dutyStaffCount" value="${d.staff}"></label><label>基本值班開始時間<input type="time" data-fee="dutyStart" value="${esc(d.start)}"></label><label>基本值班結束時間<input type="time" data-fee="dutyEnd" value="${esc(d.end)}"></label><label>超時值班費／人／半小時<input type="number" min="0" data-fee="dutyOvertimePerPersonHalfHour" value="${d.overtime}"></label></div></section>`;statuses.innerHTML=Object.entries(systemSettings.rooms).map(([name,r])=>`<label>${esc(r.label||name)}<select data-available="${esc(name)}"><option value="true" ${r.available?"selected":""}>可借用</option><option value="false" ${!r.available?"selected":""}>暫停借用</option></select></label>`).join("");renderSchoolCalendarSettings();renderConsumableSettings();renderVenueIntroSettings();renderLocationSettings();renderNotificationSettings();selectSettingsSection(currentSettingsSection())}
 function cleaningLabel(name){return name==="多功能外科指導手術室"?"手術室清潔費":`${name}清潔費`}
 async function saveSystemSettings(){let btn=$("#saveSettingsBtn");await runBusyAction("saveSystemSettings",btn,"儲存中…",async()=>{$$("[data-rate]").forEach(el=>systemSettings.rooms[el.dataset.rate].rate=+el.value||0);$$("[data-cleaning]").forEach(el=>systemSettings.rooms[el.dataset.cleaning].cleaning=+el.value||0);$$("[data-fee]").forEach(el=>{let key=el.dataset.fee;systemSettings.fees[key]=el.type==="time"?(formatTime(el.value)||el.value):(+el.value||0)});$$("[data-available]").forEach(el=>systemSettings.rooms[el.dataset.available].available=el.value==="true");consumableSettings=normalizeConsumables(collectConsumables());consumableSettings.forEach(item=>{if(item.legacyKey)systemSettings.fees[item.legacyKey]=+item.price||0});persistSettings();try{let res=await api("saveConsumableSettings",{adminToken,items:consumableSettings,actor:"後台管理者"});if(res.ok)consumableSettings=normalizeConsumables(res.items||res.data||consumableSettings);else console.error("[saveConsumableSettings] failed:",res)}catch(err){console.error("[saveConsumableSettings] failed:",err)}renderConsumableOptions();renderPricing();renderRoomOptions();updateApplicationReview();renderSettings();toast("系統設定已儲存")}, {message:"儲存系統設定中，請稍候……"})}
 function resetSystemSettings(){systemSettings=JSON.parse(JSON.stringify(defaultSettings));persistSettings();renderPricing();renderRoomOptions();updateApplicationReview();renderSettings();toast("已回復預設值")}
@@ -1109,6 +1142,7 @@ function toast(t){let el=$("#toast");el.textContent=t;el.classList.add("show");s
 </script>
 </body>
 </html>
+
 
 
 
