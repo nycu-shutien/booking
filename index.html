@@ -709,7 +709,7 @@ function calc(x){
  ].filter(item=>item&&item.amount>0);
  return calculateTotal(parts);
 }
-function getHalfDayCount(startTime,endTime){let start=toMinutes(formatTime(startTime)||"08:00"),end=toMinutes(formatTime(endTime)||"12:00");if(end<=start)end+=1440;let minutes=Math.max(0,end-start);return Math.max(1,Math.ceil(minutes/240))}
+function getHalfDayCount(startTime,endTime){let start=toMinutes(formatTime(startTime)||"08:00"),end=toMinutes(formatTime(endTime)||"12:00");if(end<=start)end+=1440;let minutes=Math.max(0,end-start);return Math.min(2,Math.max(1,Math.ceil(minutes/240)))}
 function halfDayLabel(count){return count>1?"全天":"半天"}
 function feeItem(label,unit,qty,amount,note,category,formulaText){return{label,unit,qty,amount:Math.round(amount||0),note:note||"",category:category||"extra",formula:formulaText||`${money(unit)} × ${qty}${note?`（${note}）`:""} ＝ ${money(amount)}`}}
 function formula(label,unit,qty,amount,note,category){return feeItem(label,unit,qty,amount,note,category)}
