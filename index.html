@@ -236,14 +236,15 @@ table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;bor
   </section>
 </section>
 
-<section id="loginView" class="view">
-  <section id="loginPanel" class="panel">
-    <h2>後台登入</h2><p class="muted">請使用已授權的管理者 Email 取得一次性驗證碼。</p>
-    <div class="actions"><input id="user" type="email" autocomplete="email" aria-label="管理者 Email" placeholder="管理者 Email"><button type="button" id="requestLoginCodeBtn" class="ghost">取得驗證碼</button></div>
-    <div class="actions"><input id="pass" autocomplete="one-time-code" maxlength="8" aria-label="8 碼登入驗證碼" placeholder="8 碼登入驗證碼"><button type="button" id="loginBtn" class="primary">登入</button></div>
-    <p id="loginMessage" class="muted" role="status" aria-live="polite">驗證碼 10 分鐘內有效；登入最長 2 小時。重新整理頁面需重新登入。</p>
-  </section>
-</section>
+<section id="loginView" class="view"><section id="loginPanel" class="panel">
+ <h2>後台登入</h2><p class="muted">使用已授權的管理者 Email 與自己的密碼登入。</p>
+ <label>Email<input id="user" type="email" autocomplete="username" aria-label="管理者 Email" placeholder="管理者 Email"></label>
+ <div id="passwordLoginFields"><label>密碼<input id="pass" type="password" autocomplete="current-password" maxlength="72" aria-label="管理者密碼" placeholder="請輸入密碼"></label><div class="actions"><button type="button" id="loginBtn" class="primary">登入</button><button type="button" id="openPasswordSetupBtn" class="ghost">首次設定密碼／忘記密碼</button></div></div>
+ <div id="passwordSetupFields" class="hide"><p>請先驗證 Email，再自行設定密碼。平常登入不需收驗證信。</p><button type="button" id="requestLoginCodeBtn" class="ghost">取得密碼設定驗證碼</button><label>Email 驗證碼<input id="passwordCode" autocomplete="one-time-code" maxlength="8" aria-label="密碼設定驗證碼" placeholder="信件中的 8 碼驗證碼"></label><button type="button" id="verifyPasswordCodeBtn" class="primary">驗證 Email</button>
+ <div id="passwordNewFields" class="hide"><p class="muted">密碼至少 12 個字元，最多 72 個 UTF-8 位元組（中文字通常各占 3 個）。請勿使用與其他網站相同的密碼。</p><label>新密碼<input id="newAdminPassword" type="password" autocomplete="new-password" maxlength="72"></label><label>再次輸入新密碼<input id="confirmAdminPassword" type="password" autocomplete="new-password" maxlength="72"></label><button type="button" id="saveAdminPasswordBtn" class="primary">儲存新密碼</button></div>
+ <button type="button" id="backPasswordLoginBtn" class="ghost">返回密碼登入</button></div>
+ <p id="loginMessage" class="muted" role="status" aria-live="polite">首次使用請先設定密碼。登入最長 2 小時，不會記住登入。</p>
+ </section></section>
 
 <section id="dashboard" class="view admin-view">
   <section class="panel">
@@ -590,8 +591,10 @@ function bind(){
  $("#queryForm").onsubmit=queryApplication;
  $("#loginBtn").onclick=loginAdmin;
  $("#requestLoginCodeBtn").onclick=requestAdminCode;
+ $('#openPasswordSetupBtn').onclick=()=>showPasswordSetup(true);$('#backPasswordLoginBtn').onclick=()=>showPasswordSetup(false);
+ $('#verifyPasswordCodeBtn').onclick=verifyPasswordSetup;$('#saveAdminPasswordBtn').onclick=saveAdminPassword;
  $("#pass").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();loginAdmin()}};
- $("#user").oninput=()=>{adminLoginChallenge="";adminLoginEmail="";$("#pass").value=""};
+ $('#user').oninput=()=>{adminLoginChallenge='';adminLoginEmail='';clearPasswordFields();$('#passwordNewFields').classList.add('hide');};
  $("#logoutBtn").onclick=logoutAdmin;
  $("#statusFilter").onchange=renderAdminCalendar;
  $("#frontCalPrev").onclick=()=>{frontCalendarMonth=new Date(frontCalendarMonth.getFullYear(),frontCalendarMonth.getMonth()-1,1);renderAvailability()};
@@ -845,8 +848,8 @@ async function api(action,payload={}){
   status=res.status;text=await res.text();
   let json;
   try{json=JSON.parse(text);}catch(_){
-   const step={requestAdminLoginCode:'取得驗證碼',verifyAdminLoginCode:'驗證登入',getBookingSettings:'讀取場地設定',listCases:'讀取案件'}[action]||'讀取或儲存資料';
-   throw new Error(step+'失敗：後端未回傳有效資料（HTTP '+status+'）。請稍後再試；若是驗證登入失敗，請重新取得驗證碼。');
+   const step={requestAdminPasswordCode:'取得密碼設定驗證碼',verifyAdminPasswordCode:'驗證密碼設定 Email',setAdminPassword:'儲存新密碼',loginAdminPassword:'密碼登入',getBookingSettings:'讀取場地設定',listCases:'讀取案件'}[action]||'讀取或儲存資料';
+   throw new Error(step+'失敗：後端未回傳有效資料（HTTP '+status+'）。請稍後再試。若儲存密碼時遇到中斷，先嘗試以新密碼登入；若仍失敗，再重新驗證 Email 設定。');
   }
   if(!json||typeof json!=='object')throw new Error('後端回傳資料格式不正確，請稍後再試。');
   if(json.success===true&&json.ok===undefined)json.ok=true;
@@ -937,42 +940,59 @@ async function queryApplication(e){
  }
  }, {message:"查詢案件進度中，請稍候……",lockCase:false});
 }
+let passwordResetToken='',passwordResetEmail='';
+function clearPasswordFields(){for(const id of ['pass','passwordCode','newAdminPassword','confirmAdminPassword']){const el=document.getElementById(id);if(el)el.value='';}passwordResetToken='';passwordResetEmail='';}
+function showPasswordSetup(open){
+ clearPasswordFields();adminLoginChallenge='';adminLoginEmail='';
+ $('#passwordLoginFields').classList.toggle('hide',open);$('#passwordSetupFields').classList.toggle('hide',!open);$('#passwordNewFields').classList.add('hide');
+ $('#loginMessage').textContent=open?'首次設定或忘記密碼時，請先取得 Email 驗證碼。驗證碼 10 分鐘內有效。':'使用自己的密碼登入；登入最長 2 小時，不會記住登入。';
+}
+function passwordInputValid(value){return Array.from(value).length>=12&&new TextEncoder().encode(value).length<=72&&!/[\x00-\x1f\x7f]/.test(value);}
 async function requestAdminCode(){
- const email=$("#user").value.trim().toLowerCase();
- if(!$("#user").checkValidity()||!email){toast("請輸入管理者 Email");return}
- await runBusyAction("requestAdminCode",$("#requestLoginCodeBtn"),"寄送中…",async()=>{
-  try{
-   const res=await api("requestAdminLoginCode",{email});
-   if(!res.ok)throw new Error(res.error||"目前無法取得驗證碼，請稍後再試。");
-   if($("#user").value.trim().toLowerCase()!==email)return;
-   adminLoginChallenge=res.challengeId;adminLoginEmail=email;$("#pass").value="";
-   $("#loginMessage").textContent=res.message;$("#pass").focus();
-  }catch(err){$("#loginMessage").textContent=err.message;toast(err.message)}
- },{message:"取得登入驗證碼中…",lockCase:false});
+ const email=$('#user').value.trim().toLowerCase();if(!$('#user').checkValidity()||!email){toast('請輸入管理者 Email');return;}
+ await runBusyAction('requestAdminCode',$('#requestLoginCodeBtn'),'寄送中…',async()=>{
+  adminLoginChallenge='';adminLoginEmail='';clearPasswordFields();$('#passwordNewFields').classList.add('hide');
+  try{const res=await api('requestAdminPasswordCode',{email});if(!res.ok)throw Error(res.error||'無法取得驗證碼。');if($('#user').value.trim().toLowerCase()!==email)return;adminLoginChallenge=res.challengeId;adminLoginEmail=email;$('#loginMessage').textContent=res.message;}
+  catch(e){$('#loginMessage').textContent=e.message;}
+ },{message:'寄送密碼設定驗證碼中…',lockCase:false});
+}
+async function verifyPasswordSetup(){
+ const email=$('#user').value.trim().toLowerCase(),code=$('#passwordCode').value.trim();
+ if(!adminLoginChallenge||adminLoginEmail!==email){toast('請先取得驗證碼。');return;}
+ if(!/^[a-fA-F0-9]{8}$/.test(code)){toast('請輸入信件中的 8 碼驗證碼。');return;}
+ await runBusyAction('verifyPasswordSetup',$('#verifyPasswordCodeBtn'),'驗證中…',async()=>{
+  try{const res=await api('verifyAdminPasswordCode',{email,code,challengeId:adminLoginChallenge});if(!res.ok)throw Error(res.error||'驗證失敗。');if($('#user').value.trim().toLowerCase()!==email)return;
+   passwordResetToken=res.resetToken;passwordResetEmail=email;adminLoginChallenge='';$('#passwordCode').value='';$('#passwordNewFields').classList.remove('hide');$('#loginMessage').textContent='驗證成功，請在 5 分鐘內自行設定新密碼。';$('#newAdminPassword').focus();
+  }catch(e){$('#loginMessage').textContent=e.message;}
+ },{message:'驗證 Email 中…',lockCase:false});
+}
+async function saveAdminPassword(){
+ const email=$('#user').value.trim().toLowerCase(),password=$('#newAdminPassword').value;
+ if(!passwordResetToken||email!==passwordResetEmail){toast('請先完成 Email 驗證。');return;}
+ if(!passwordInputValid(password)){toast('密碼至少 12 個字元，最多 72 個 UTF-8 位元組；中文通常每字占 3 個位元組。');return;}
+ if(password!==$('#confirmAdminPassword').value){toast('兩次輸入的密碼不同。');return;}
+ const bytes=new Uint8Array(16);crypto.getRandomValues(bytes);const saltEntropy=Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');
+ await runBusyAction('saveAdminPassword',$('#saveAdminPasswordBtn'),'設定中…',async()=>{
+  try{const res=await api('setAdminPassword',{email,password,resetToken:passwordResetToken,saltEntropy});if(!res.ok)throw Error(res.error||'密碼未設定成功。');
+   clearAdminSession();showPasswordSetup(false);$('#user').value=email;$('#loginMessage').textContent=res.message;$('#pass').focus();
+  }catch(e){$('#loginMessage').textContent=e.message;}finally{$('#newAdminPassword').value='';$('#confirmAdminPassword').value='';}
+ },{message:'安全保存新密碼中…',lockCase:false});
 }
 async function loginAdmin(){
- const email=$("#user").value.trim().toLowerCase(),code=$("#pass").value.trim();
- if(!adminLoginChallenge||email!==adminLoginEmail){toast("請先取得登入驗證碼");return}
- if(!/^[a-fA-F0-9]{8}$/.test(code)){toast("請輸入信件中的 8 碼驗證碼");return}
- await runBusyAction("loginAdmin",$("#loginBtn"),"登入中…",async()=>{
-  try{
-   const res=await api("verifyAdminLoginCode",{email,code,challengeId:adminLoginChallenge});
-   if(!res.ok)throw new Error(res.error||"後台登入失敗");
-   admin=true;adminMode=true;adminToken=res.adminToken;
-   adminLoginChallenge="";adminLoginEmail="";$("#pass").value="";
-   clearTimeout(adminSessionTimer);
-   adminSessionTimer=setTimeout(()=>{clearAdminSession();show("loginView");toast("登入已到期，請重新登入")},Math.max(0,res.expiresAt-Date.now()));
-   // Authentication succeeded. A settings outage must not send the user back through OTP.
-   const config=await loadBookingConfig();
-   if(!admin)return;
-   await show("dashboard");
-   if(!admin)return;
-   if(config)toast("已登入後台");
-   else toast("已登入，但場地設定暫時無法載入。請稍後點選「設定」重新載入；送件與費用操作仍須通過後端檢查。");
-  }catch(err){$("#pass").value="";$("#loginMessage").textContent=err.message;toast(err.message)}
- },{message:"登入後台並讀取案件中，請稍候……",lockCase:false});
+ const email=$('#user').value.trim().toLowerCase(),password=$('#pass').value;
+ if(!$('#user').checkValidity()||!email||!password){toast('請輸入管理者 Email 與密碼。');return;}
+ await runBusyAction('loginAdmin',$('#loginBtn'),'登入中…',async()=>{
+  try{const res=await api('loginAdminPassword',{email,password});if(!res.ok)throw Error(res.error||'登入失敗。');
+   admin=true;adminMode=true;adminToken=res.adminToken;clearPasswordFields();adminLoginChallenge='';adminLoginEmail='';
+   clearTimeout(adminSessionTimer);adminSessionTimer=setTimeout(()=>{clearAdminSession();show('loginView');toast('登入已到期，請重新登入');},Math.max(0,res.expiresAt-Date.now()));
+   const config=await loadBookingConfig();if(!admin)return;await show('dashboard');if(!admin)return;
+   toast(config?'已登入後台':'已登入，但場地設定暫時無法載入，請稍後到設定頁重新載入。');
+  }catch(e){$('#loginMessage').textContent=e.message;toast(e.message);}finally{$('#pass').value='';}
+ },{message:'登入後台中…',lockCase:false});
 }
+
 function clearAdminSession(){
+ clearPasswordFields();
  clearTimeout(adminSessionTimer);adminSessionTimer=null;
  admin=false;adminMode=false;adminToken="";adminLoginChallenge="";adminLoginEmail="";
  [AK,TK,"shutien-admin-mode-v1"].forEach(key=>sessionStorage.removeItem(key));
