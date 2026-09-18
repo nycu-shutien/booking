@@ -34,7 +34,7 @@ table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;bor
 .document-card{border:1px solid var(--line);border-radius:8px;background:#fbfdfe;padding:14px;display:grid;gap:10px}.document-card h4{margin:0;color:#16324a}.document-card details{border-top:1px solid var(--line);padding-top:10px}
 @media(max-width:900px){.settings-picker,.fee-detail-layout{grid-template-columns:1fr}.fee-detail-side .fee-summary-card{position:static}}
 </style>
-</head>
+<style>#teachingRosterPanel input[type=checkbox]{width:auto;min-height:0;height:auto;display:inline-block;margin-right:8px}#teachingRosterPanel details{margin:12px 0}#teachingRosterPanel h5{font-size:15px;margin:18px 0 8px}</style></head>
 <body>
 <div class="shell">
 <aside class="side">
@@ -615,8 +615,8 @@ function bind(){
  $("#goRoomBlockSettingsBtn").onclick=()=>show("bookingCalendar");
  document.addEventListener("click",e=>{if(!$("#userMenu").contains(e.target))$("#userMenuList").classList.add("hide")});
 }
-function initDefaults(){loadBookingConfig();let d=today();$$('input[name="applyDate"],#blockForm input[name="date"],#blockForm input[name="repeatUntil"]').forEach(el=>{if(!el.value)el.value=d});renderConsumableOptions();renderPricing();renderRoomOptions();renderApplicationAttachmentFields();renderVenueIntro();initTimeSelects();showApplyStep();updateApplicationReview();updateBlockRepeatFields();renderBlockList();loadVenueSettings();loadLocationSettings();loadConsumableSettings();loadSchoolCalendarSettings()}
-async function show(id){if(isAdminView(id)&&(!admin||!adminMode))id=admin?"home":"loginView";$$(".view").forEach(v=>v.classList.toggle("active",v.id===id));$$(".nav button").forEach(b=>b.classList.toggle("active",(b.dataset.view||b.dataset.viewBtn)===id));renderShell();if(id==="venue"){await Promise.all([loadVenueSettings(),loadLocationSettings()]);renderVenueIntro()}if(id==="availability")await renderAvailability();if(id==="pricing"){await Promise.all([loadConsumableSettings(),loadSchoolCalendarSettings()]);renderPricing()}if(id==="apply"){await Promise.all([loadConsumableSettings(),loadSchoolCalendarSettings()]);renderConsumableOptions();renderRoomOptions();updateApplicationReview()}if(["settings","apply","pricing","availability","bookingCalendar"].includes(id))await loadBookingConfig();if(id==="settings"){await loadTeachingBenefits();await Promise.all([loadVenueSettings(),loadLocationSettings(),loadNotificationSettings(),loadConsumableSettings(),loadSchoolCalendarSettings()]);renderSettings()}if(isAdminView(id)){await refreshAdmin();renderAll();if(id==="bookingCalendar"){renderBookingCalendar();renderBlockList()}}}
+function initDefaults(){loadBookingConfig();let d=today();$$('input[name="applyDate"],#blockForm input[name="date"],#blockForm input[name="repeatUntil"]').forEach(el=>{if(!el.value)el.value=d});renderConsumableOptions();renderPricing();renderRoomOptions();renderApplicationAttachmentFields();renderVenueIntro();initTimeSelects();showApplyStep();updateApplicationReview();updateBlockRepeatFields();renderBlockList()}
+
 function isAdminView(id){return ["dashboard","allCases","adminCalendar","bookingCalendar","export","settings"].includes(id)}
 function loadSettings(){return mergeSettings({})}
 
@@ -646,8 +646,8 @@ async function deleteSchoolCalendarDate(calendarDate){if(!confirm("確定刪除�
 function renderPricing(){let venue=$("#venuePriceList"),extra=$("#extraPriceList"),d=dutySettings();if(!venue||!extra)return;venue.innerHTML="<h3>場地租借費（依時間）</h3>"+Object.entries(systemSettings.rooms).map(([name,r])=>`<div class="price-row"><span>${esc(r.label||name)}${r.available?"":"（暫停借用）"}</span><b>${money(r.rate)} / 每天半天（4 小時內）</b></div>`).join("")+"<h3>清潔費（依次）</h3>"+Object.entries(systemSettings.rooms).map(([name,r])=>`<div class="price-row"><span>${esc(cleaningLabel(name))}</span><b>${money(r.cleaning)}／次</b></div>`).join("");extra.innerHTML=`<h3>耗材項目</h3>${enabledConsumables().map(item=>`<div class="price-row"><span>${esc(item.itemName)}${item.description?`<br><small class="muted">${esc(item.description)}</small>`:""}</span><b>${money(item.price)} / ${esc(item.unit)}</b></div>`).join("")}<h3>其他費用（依次）</h3><div class="price-row"><span>場佈費用（限多功能外科指導手術室）</span><b>${money(systemSettings.fees.setup)}／次</b></div><h3>工作人員值班費</h3><p class="muted">工作人員值班費適用於學校行事曆認定之非上班日、例假日及國定假日。是否為上班日，依國立陽明交通大學行事曆及本系統設定為準。</p><div class="price-row"><span>非上班日基本值班費</span><b>每人每日 ${money(d.base)}</b></div><div class="price-row"><span>固定值班人數</span><b>${d.staff} 人</b></div><div class="price-row"><span>非上班日每日基本值班費合計</span><b>${money(d.base*d.staff)}</b></div><div class="price-row"><span>基本值班時段</span><b>${esc(d.start)}–${esc(d.end)}</b></div><div class="price-row"><span>上班日 ${esc(d.start)}–${esc(d.end)}</span><b>不收基本值班費</b></div><div class="price-row"><span>超出基本時段</span><b>每人每半小時 ${money(d.overtime)}</b></div><p class="muted">未滿半小時，以半小時計。值班費依申請人填寫的借用時間計算，而非僅依活動進行時間計算。</p>`}
 function renderRoomOptions(){let box=$("#roomOptions");if(!box)return;box.innerHTML="<legend>使用場地</legend>"+Object.entries(systemSettings.rooms).map(([name,r])=>`<label><input type="checkbox" name="rooms" value="${esc(name)}" ${r.available?"":"disabled"}>${esc(r.label||name)}${r.available?"":"（暫停借用）"}</label>`).join("")}
 function currentSettingsSection(){let saved=localStorage.getItem(settingsSectionKey)||"pricing";return settingsSectionHints[saved]?saved:"pricing"}
-function selectSettingsSection(section){let key=settingsSectionHints[section]?section:"pricing";localStorage.setItem(settingsSectionKey,key);let select=$("#settingsSectionSelect"),hint=$("#settingsSectionHint"),saveActions=$(".settings-save-actions"),resetBtn=$("#resetSettingsBtn");if(select&&select.value!==key)select.value=key;if(hint)hint.textContent=settingsSectionHints[key]||"";$$("[data-settings-section]").forEach(el=>el.classList.toggle("hide",el.dataset.settingsSection!==key));if(saveActions)saveActions.classList.toggle("hide",settingsSectionsWithoutGlobalSave.includes(key));if(resetBtn)resetBtn.classList.toggle("hide",settingsSectionsWithoutReset.includes(key))}
-function renderSettings(){let rates=$("#rateSettings"),statuses=$("#venueStatusSettings"),d=dutySettings();if(!rates||!statuses)return;rates.innerHTML=`<section class="detail-section wide"><h3>場地租借費（依時間）</h3><div class="grid">${Object.entries(systemSettings.rooms).map(([name,r])=>`<label>${esc(r.label||name)} / 半天（4 小時內）<input type="number" min="0" data-rate="${esc(name)}" value="${r.rate}"></label>`).join("")}</div></section><section class="detail-section wide"><h3>其他費用（依次）</h3><div class="grid"><label>場佈費用（元／次）<input type="number" min="0" data-fee="setup" value="${systemSettings.fees.setup}"></label>${Object.entries(systemSettings.rooms).map(([name,r])=>`<label>${esc(cleaningLabel(name))}（元／次）<input type="number" min="0" data-cleaning="${esc(name)}" value="${r.cleaning}"></label>`).join("")}</div></section><section class="detail-section wide"><h3>工作人員值班費設定</h3><p class="muted">基本值班費只適用於學校行事曆認定之非上班日。上班日 ${esc(d.start)}–${esc(d.end)} 不收基本值班費；超出基本時段則依借用時間加收超時值班費。</p><p class="muted">借用時間＝工作人員進場 → 場地布置 → 活動進行 → 器材整理 → 場地復原 → 工作人員離場。行事曆衝堂判斷、場地使用時間與值班費均以此時間為準。</p><div class="grid"><label>非上班日基本值班費／人／天<input type="number" min="0" data-fee="dutyBasePerPersonDay" value="${d.base}"></label><label>固定值班人數<input type="number" min="1" data-fee="dutyStaffCount" value="${d.staff}"></label><label>基本值班開始時間<select data-fee="dutyStart" data-time-select data-selected="${esc(d.start)}"></select></label><label>基本值班結束時間<select data-fee="dutyEnd" data-time-select data-selected="${esc(d.end)}"></select></label><label>超時值班費／人／半小時<input type="number" min="0" data-fee="dutyOvertimePerPersonHalfHour" value="${d.overtime}"></label></div></section>`;statuses.innerHTML=Object.entries(systemSettings.rooms).map(([name,r])=>`<label>${esc(r.label||name)}<select data-available="${esc(name)}"><option value="true" ${r.available?"selected":""}>可借用</option><option value="false" ${!r.available?"selected":""}>暫停借用</option></select></label>`).join("");renderSchoolCalendarSettings();renderConsumableSettings();renderVenueIntroSettings();renderLocationSettings();renderNotificationSettings();renderTeachingBenefitSettings();initTimeSelects(rates);selectSettingsSection(currentSettingsSection())}
+function selectSettingsVisibility(section){let key=settingsSectionHints[section]?section:"pricing";localStorage.setItem(settingsSectionKey,key);let select=$("#settingsSectionSelect"),hint=$("#settingsSectionHint"),saveActions=$(".settings-save-actions"),resetBtn=$("#resetSettingsBtn");if(select&&select.value!==key)select.value=key;if(hint)hint.textContent=settingsSectionHints[key]||"";$$("[data-settings-section]").forEach(el=>el.classList.toggle("hide",el.dataset.settingsSection!==key));if(saveActions)saveActions.classList.toggle("hide",settingsSectionsWithoutGlobalSave.includes(key));if(resetBtn)resetBtn.classList.toggle("hide",settingsSectionsWithoutReset.includes(key))}
+function renderRateAndStatusSettings(){let rates=$("#rateSettings"),statuses=$("#venueStatusSettings"),d=dutySettings();if(!rates||!statuses)return;rates.innerHTML=`<section class="detail-section wide"><h3>場地租借費（依時間）</h3><div class="grid">${Object.entries(systemSettings.rooms).map(([name,r])=>`<label>${esc(r.label||name)} / 半天（4 小時內）<input type="number" min="0" data-rate="${esc(name)}" value="${r.rate}"></label>`).join("")}</div></section><section class="detail-section wide"><h3>其他費用（依次）</h3><div class="grid"><label>場佈費用（元／次）<input type="number" min="0" data-fee="setup" value="${systemSettings.fees.setup}"></label>${Object.entries(systemSettings.rooms).map(([name,r])=>`<label>${esc(cleaningLabel(name))}（元／次）<input type="number" min="0" data-cleaning="${esc(name)}" value="${r.cleaning}"></label>`).join("")}</div></section><section class="detail-section wide"><h3>工作人員值班費設定</h3><p class="muted">基本值班費只適用於學校行事曆認定之非上班日。上班日 ${esc(d.start)}–${esc(d.end)} 不收基本值班費；超出基本時段則依借用時間加收超時值班費。</p><p class="muted">借用時間＝工作人員進場 → 場地布置 → 活動進行 → 器材整理 → 場地復原 → 工作人員離場。行事曆衝堂判斷、場地使用時間與值班費均以此時間為準。</p><div class="grid"><label>非上班日基本值班費／人／天<input type="number" min="0" data-fee="dutyBasePerPersonDay" value="${d.base}"></label><label>固定值班人數<input type="number" min="1" data-fee="dutyStaffCount" value="${d.staff}"></label><label>基本值班開始時間<select data-fee="dutyStart" data-time-select data-selected="${esc(d.start)}"></select></label><label>基本值班結束時間<select data-fee="dutyEnd" data-time-select data-selected="${esc(d.end)}"></select></label><label>超時值班費／人／半小時<input type="number" min="0" data-fee="dutyOvertimePerPersonHalfHour" value="${d.overtime}"></label></div></section>`;statuses.innerHTML=Object.entries(systemSettings.rooms).map(([name,r])=>`<label>${esc(r.label||name)}<select data-available="${esc(name)}"><option value="true" ${r.available?"selected":""}>可借用</option><option value="false" ${!r.available?"selected":""}>暫停借用</option></select></label>`).join("");initTimeSelects(rates)}
 function cleaningLabel(name){return name==="多功能外科指導手術室"?"手術室清潔費":`${name}清潔費`}
 async function saveSystemSettings(){
  await runBusyAction('saveSystemSettings',$('#saveSettingsBtn'),'儲存中…',async()=>{
@@ -958,9 +958,8 @@ async function loginAdmin(){
    clearTimeout(adminSessionTimer);
    adminSessionTimer=setTimeout(()=>{clearAdminSession();show("loginView");toast("登入已到期，請重新登入")},Math.max(0,res.expiresAt-Date.now()));
    await loadBookingConfig(true);
-   await refreshAdmin();
    if(!admin)return;
-   renderAll();await show("dashboard");toast("已登入後台");
+   await show("dashboard");toast("已登入後台");
   }catch(err){$("#pass").value="";$("#loginMessage").textContent=err.message;toast(err.message)}
  },{message:"登入後台並讀取案件中，請稍候……",lockCase:false});
 }
@@ -968,13 +967,13 @@ function clearAdminSession(){
  clearTimeout(adminSessionTimer);adminSessionTimer=null;
  admin=false;adminMode=false;adminToken="";adminLoginChallenge="";adminLoginEmail="";
  [AK,TK,"shutien-admin-mode-v1"].forEach(key=>sessionStorage.removeItem(key));
- data=[];selectedCaseNo="";activeCaseNo="";unsavedBillingCases.clear();savedApprovalSignatures.clear();supplementDrafts.clear();supplementPreviews.clear();aiReviewViews.clear();aiReviewPreviews.clear();teachingBenefitYears=[];teachingBenefitLoaded=false;teachingBenefitError="";teachingBenefitYear="";teachingBenefitEditors.clear();teachingBenefitSelections.clear();
+ data=[];selectedCaseNo="";activeCaseNo="";unsavedBillingCases.clear();savedApprovalSignatures.clear();supplementDrafts.clear();supplementPreviews.clear();aiReviewViews.clear();aiReviewPreviews.clear();teachingBenefitYears=[];teachingBenefitLoaded=false;teachingBenefitError="";teachingBenefitYear="";teachingBenefitEditors.clear();teachingBenefitSelections.clear();rosterClear();
  invalidateCalendarCaches();
  $("#pass").value="";$("#userMenuList").classList.add("hide");
  closeCalendarModal();renderAll();renderShell();
 }
 function goFrontMode(){adminMode=false;$("#userMenuList").classList.add("hide");renderShell();show("home");toast("已切換至前台")}
-async function enterAdminMode(){if(!admin){show("loginView");return}await runBusyAction("enterAdminMode",$("#goAdminBtn"),"載入中…",async()=>{adminMode=true;$("#userMenuList").classList.add("hide");await refreshAdmin();if(!admin)return;renderShell();await show("dashboard")},{message:"載入後台資料中，請稍候……",lockCase:false})}
+async function enterAdminMode(){if(!admin){show("loginView");return}await runBusyAction("enterAdminMode",$("#goAdminBtn"),"載入中…",async()=>{adminMode=true;$("#userMenuList").classList.add("hide");if(!admin)return;renderShell();await show("dashboard")},{message:"載入後台資料中，請稍候……",lockCase:false})}
 async function logoutAdmin(){
  const token=adminToken;
  clearAdminSession();show("home");
@@ -1042,7 +1041,7 @@ function syncAdminCaseUrl(caseNo){try{let url=new URL(location.href);if(caseNo)u
 function setActiveCaseNo(caseNo,{syncUrl=true}={}){let next=String(caseNo||"").trim();activeCaseNo=next;selectedCaseNo=next;if(syncUrl)syncAdminCaseUrl(next)}
 function currentCase(){return data.find(x=>x.caseNo===activeCaseNo)||data.find(x=>x.caseNo===selectedCaseNo)||null}
 function ensureSelectedCase(){if(!data.length){setActiveCaseNo("",{syncUrl:false});return}let urlCase=getUrlAdminCase();if(!activeCaseNo&&urlCase&&data.some(x=>x.caseNo===urlCase))setActiveCaseNo(urlCase);if(!data.some(x=>x.caseNo===activeCaseNo))setActiveCaseNo(data[0].caseNo)}
-function renderAll(){ensureSelectedCase();renderShell();renderMetrics();renderReviewCenter();renderAdminCalendar();renderBookingCalendar();renderBlockList()}
+
 function renderShell(){
  $("#frontNav").classList.toggle("hide",adminMode);
  $("#adminNav").classList.toggle("hide",!adminMode);
@@ -1409,13 +1408,18 @@ function teachingDraftRowsHtml(editor){return editor.entries.map((row,i)=>{const
 function renderTeachingBenefitSettings(){
  const box=$('#teachingBenefitSettings');if(!box)return;
  const state=teachingState(teachingBenefitYear),editor=teachingEditor(),years=[...new Set(teachingBenefitYears.map(s=>s.year).concat(teachingBenefitYear?[Number(teachingBenefitYear)]:[]))].sort((a,b)=>b-a);
- box.innerHTML=`<h3>場地優惠計算方式／年度教學優惠名單</h3><p>支援比例＝同年度不重複的支援教職員人數 ÷ 該部科陽明交通大學教職員總數。同一位老師支援多門課仍只算 1 人，且須屬於該部科教職員。</p><p class="muted">本版填寫已核對的人數，不上傳老師姓名，也不會從人數欄位自動去重。僅優惠場租；清潔、場佈、耗材及值班費沿用原規則。</p><div class="notice">100%：全免；80% 至未滿 100%：酌收 20%；50% 至未滿 80%：酌收 50%；30% 至未滿 50%：酌收 70%；未滿 30%：全額收費。級距按原始比例判定，不使用顯示的四捨五入值。</div><div class="grid"><label>選擇適用年度<select id="teachingYearSelect"><option value="">請選擇年度</option>${years.map(y=>`<option value="${y}" ${Number(teachingBenefitYear)===y?'selected':''}>${teachingYearLabel(y)}</option>`).join('')}</select></label><label>新增適用年度（民國）<input id="teachingNewYear" type="number" min="100" max="300" placeholder="例如 116"></label></div><div class="actions"><button type="button" class="ghost" id="teachingNewYearBtn">建立／開啟年度</button><button type="button" class="ghost" id="teachingReloadBtn">重新載入名單</button></div>${!teachingBenefitLoaded?`<div class="notice">${esc(teachingBenefitError||'尚未載入年度名單，請按重新載入。')}目前不能儲存或套用。</div>`:''}${editor?`<h4>${teachingYearLabel(teachingBenefitYear)} 年度草稿</h4><p>${state.enabled&&state.active?`目前啟用版本 ${state.active.version}（${esc(formatUploadTime(state.active.publishedAt))}）。草稿修改不影響該版本。`:'尚未啟用或已停用；案件仍保留原本的收費方式。'}</p><label>統計期間／資料依據（選填）<textarea id="teachingEvidence" maxlength="500" rows="2" placeholder="例如：115 年度教學支援名單及部科教職員名冊，已核對重複人員。">${esc(editor.evidence)}</textarea></label><div style="overflow-x:auto"><table><thead><tr><th>醫院</th><th>部科</th><th>教職員總數</th><th>不重複支援人數</th><th>支援比例／實收</th><th>操作</th></tr></thead><tbody>${teachingDraftRowsHtml(editor)}</tbody></table></div><div class="actions"><button type="button" class="ghost" id="teachingAddRow">新增部科</button><button type="button" class="primary" id="teachingSaveDraft" ${teachingBenefitLoaded?'':'disabled'}>儲存年度草稿</button></div><p id="teachingDirtyHint" class="muted">${editor.dirty?'有未儲存修改，請先儲存草稿再啟用。':'草稿已載入；確認人數後可啟用。'}</p><label style="display:flex;align-items:flex-start;gap:8px"><input style="width:18px;height:18px;min-height:18px;flex:0 0 18px;margin:3px 0" type="checkbox" id="teachingCountsConfirmed">我已確認支援人數按同年度去重，且全部屬於上述部科的陽明交通大學教職員。</label><div class="actions"><button type="button" class="primary" id="teachingPublish" ${!teachingBenefitLoaded||editor.dirty||!editor.revision?'disabled':''}>確認並啟用此年度名單</button>${state.enabled?'<button type="button" class="ghost danger" id="teachingDisable">停用此年度名單</button>':''}</div>${state.active?`<details><summary>查看${state.enabled?'目前啟用':'最後啟用'}名單（版本 ${state.active.version}）</summary><p class="muted">${esc(state.active.evidence||'未填資料依據')}｜${esc(state.active.publishedBy)}</p><div style="overflow-x:auto"><table><thead><tr><th>醫院／部科</th><th>支援／總人數</th><th>支援比例</th><th>實收場租</th></tr></thead><tbody>${state.active.entries.map(r=>`<tr><td>${esc(r.hospital)}／${esc(r.department)}</td><td>${r.supported}／${r.total}</td><td>${teachingRatioText(r.total,r.supported)}</td><td>${esc(teachingBenefitTier(r.total,r.supported)?.method||'待確認')}</td></tr>`).join('')}</tbody></table></div></details>`:''}`:''}`;
+ box.innerHTML=`<h3>場地優惠計算方式／年度教學優惠名單</h3><p>支援比例＝同年度不重複的支援教職員人數 ÷ 該部科陽明交通大學教職員總數。同一位老師支援多門課仍只算 1 人，且須屬於該部科教職員。</p><p class="muted">可使用教師名單比對產生年度草稿，或沿用人工核對人數。由名單產生的草稿，人數須回到教師／授課資料修正。僅優惠場租；清潔、場佈、耗材及值班費沿用原規則。</p><div class="notice">100%：全免；80% 至未滿 100%：酌收 20%；50% 至未滿 80%：酌收 50%；30% 至未滿 50%：酌收 70%；未滿 30%：全額收費。級距按原始比例判定，不使用顯示的四捨五入值。</div><div class="grid"><label>選擇適用年度<select id="teachingYearSelect"><option value="">請選擇年度</option>${years.map(y=>`<option value="${y}" ${Number(teachingBenefitYear)===y?'selected':''}>${teachingYearLabel(y)}</option>`).join('')}</select></label><label>新增適用年度（民國）<input id="teachingNewYear" type="number" min="100" max="300" placeholder="例如 116"></label></div><div class="actions"><button type="button" class="ghost" id="teachingNewYearBtn">建立／開啟年度</button><button type="button" class="ghost" id="teachingReloadBtn">重新載入名單</button></div>${!teachingBenefitLoaded?`<div class="notice">${esc(teachingBenefitError||'尚未載入年度名單，請按重新載入。')}目前不能儲存或套用。</div>`:''}${editor?`<section id="teachingRosterPanel" class="notice"></section><h4>${teachingYearLabel(teachingBenefitYear)} 年度草稿</h4><p>${state.enabled&&state.active?`目前啟用版本 ${state.active.version}（${esc(formatUploadTime(state.active.publishedAt))}）。草稿修改不影響該版本。`:'尚未啟用或已停用；案件仍保留原本的收費方式。'}</p><label>統計期間／資料依據（選填）<textarea id="teachingEvidence" maxlength="500" rows="2" placeholder="例如：115 年度教學支援名單及部科教職員名冊，已核對重複人員。">${esc(editor.evidence)}</textarea></label><div style="overflow-x:auto"><table><thead><tr><th>醫院</th><th>部科</th><th>教職員總數</th><th>不重複支援人數</th><th>支援比例／實收</th><th>操作</th></tr></thead><tbody>${teachingDraftRowsHtml(editor)}</tbody></table></div><div class="actions"><button type="button" class="ghost" id="teachingAddRow">新增部科</button><button type="button" class="primary" id="teachingSaveDraft" ${teachingBenefitLoaded?'':'disabled'}>儲存年度草稿</button></div><p id="teachingDirtyHint" class="muted">${editor.dirty?'有未儲存修改，請先儲存草稿再啟用。':'草稿已載入；確認人數後可啟用。'}</p><label style="display:flex;align-items:flex-start;gap:8px"><input style="width:18px;height:18px;min-height:18px;flex:0 0 18px;margin:3px 0" type="checkbox" id="teachingCountsConfirmed">我已確認支援人數按同年度去重，且全部屬於上述部科的陽明交通大學教職員。</label><div class="actions"><button type="button" class="primary" id="teachingPublish" ${!teachingBenefitLoaded||editor.dirty||!editor.revision?'disabled':''}>確認並啟用此年度名單</button>${state.enabled?'<button type="button" class="ghost danger" id="teachingDisable">停用此年度名單</button>':''}</div>${state.active?`<details><summary>查看${state.enabled?'目前啟用':'最後啟用'}名單（版本 ${state.active.version}）</summary><p class="muted">${esc(state.active.evidence||'未填資料依據')}｜${esc(state.active.publishedBy)}</p><div style="overflow-x:auto"><table><thead><tr><th>醫院／部科</th><th>支援／總人數</th><th>支援比例</th><th>實收場租</th></tr></thead><tbody>${state.active.entries.map(r=>`<tr><td>${esc(r.hospital)}／${esc(r.department)}</td><td>${r.supported}／${r.total}</td><td>${teachingRatioText(r.total,r.supported)}</td><td>${esc(teachingBenefitTier(r.total,r.supported)?.method||'待確認')}</td></tr>`).join('')}</tbody></table></div></details>`:''}`:''}`;
  $('#teachingYearSelect').onchange=e=>{teachingBenefitYear=e.target.value;renderTeachingBenefitSettings()};
  $('#teachingNewYearBtn').onclick=()=>{const y=Number($('#teachingNewYear').value);if(!Number.isInteger(y)||y<100||y>300){toast('請填寫民國年度，例如 116。');return}teachingBenefitYear=String(y);renderTeachingBenefitSettings()};
  $('#teachingReloadBtn').onclick=async()=>{if([...teachingBenefitEditors.values()].some(e=>e.dirty)&&!confirm('重新載入會捨棄尚未儲存的年度草稿，確定繼續？'))return;if(await loadTeachingBenefits())teachingBenefitEditors.clear();renderTeachingBenefitSettings()};
  if(!editor)return;
+ renderTeachingRoster();
  const dirty=()=>{editor.dirty=true;$('#teachingDirtyHint').textContent='有未儲存修改，請先儲存草稿再啟用。';$('#teachingPublish').disabled=true;$('#teachingCountsConfirmed').checked=false};
  $$('[data-teaching-field]').forEach(el=>el.oninput=()=>{const row=editor.entries[Number(el.dataset.teachingIndex)],field=el.dataset.teachingField;row[field]=['total','supported'].includes(field)?(el.value===''?null:Number(el.value)):el.value;dirty();const tier=teachingBenefitTier(row.total,row.supported);$(`[data-teaching-result="${el.dataset.teachingIndex}"]`).innerHTML=esc(teachingRatioText(row.total,row.supported))+'<br>'+esc(tier?.method||'人數待確認')});
+ if(state.draftRosterRevision){
+  $$('#teachingBenefitSettings [data-teaching-field],#teachingBenefitSettings [data-teaching-remove],#teachingEvidence,#teachingAddRow,#teachingSaveDraft').forEach(e=>e.disabled=true);
+  $('#teachingDirtyHint').textContent='此草稿由教師名單版本 '+state.draftRosterRevision+' 計算。若名單變更，請重新產生草稿後再啟用。';
+ }
  $('#teachingEvidence').oninput=e=>{editor.evidence=e.target.value;dirty()};
  $('#teachingAddRow').onclick=()=>{if(editor.entries.length>=150){toast('每年最多 150 個部科。');return}editor.entries.push({hospital:'',department:'',total:null,supported:null});editor.dirty=true;renderTeachingBenefitSettings()};
  $$('[data-teaching-remove]').forEach(el=>el.onclick=()=>{editor.entries.splice(Number(el.dataset.teachingRemove),1);editor.dirty=true;renderTeachingBenefitSettings()});
@@ -1501,6 +1505,204 @@ async function useAiReviewDraft(caseNo,requestId,btn){
   if(!confirm('確定以這份 AI 建議取代目前補件事項草稿？帶入後仍須人工核對，這一步不會寄信。'))return;
   supplementDrafts.set(caseNo,record.result.supplementDraft);supplementPreviews.delete(caseNo);aiReviewViews.set(caseNo,res);renderReviewCenter();toast('已帶入補件草稿，請核對內容，再預覽並確認寄送。');
  }catch(err){toast(err.message)}},{message:'核對 AI 草稿是否仍適用…'});
+}
+
+// Minimal read-only XLSX reader: no macros, formulas, external links, or third-party upload.
+async function rosterReadXlsx(file) {
+ if(!/\.xlsx$/i.test(file.name)||file.size>3*1024*1024)throw Error('請使用 3 MB 以內的 .xlsx；舊版 .xls 請先另存為 .xlsx。');
+ const buffer=await file.arrayBuffer(),view=new DataView(buffer),bytes=new Uint8Array(buffer),decoder=new TextDecoder(),files=new Map();let end=-1;
+ for(let i=bytes.length-22;i>=Math.max(0,bytes.length-65557);i--)if(view.getUint32(i,true)===0x06054b50){end=i;break;}
+ if(end<0||view.getUint16(end+4,true)||view.getUint16(end+6,true))throw Error('無法讀取此 Excel，請另存為一般 .xlsx。');
+ const count=view.getUint16(end+10,true);let offset=view.getUint32(end+16,true),total=0;
+ if(count>1500)throw Error('Excel 內容過多，請另存只含名單的檔案。');
+ for(let n=0;n<count;n++){
+  if(offset+46>bytes.length||view.getUint32(offset,true)!==0x02014b50)throw Error('Excel ZIP 目錄損毀。');
+  const flags=view.getUint16(offset+8,true),method=view.getUint16(offset+10,true),size=view.getUint32(offset+20,true),rawSize=view.getUint32(offset+24,true),nl=view.getUint16(offset+28,true),el=view.getUint16(offset+30,true),cl=view.getUint16(offset+32,true),start=view.getUint32(offset+42,true);
+  const name=decoder.decode(bytes.slice(offset+46,offset+46+nl));total+=rawSize;
+  if(flags&1||total>30*1024*1024||rawSize>12*1024*1024||files.has(name)||name.includes('..'))throw Error('Excel 加密、內容過大或結構不支援。');
+  files.set(name,{start,size,rawSize,method});offset+=46+nl+el+cl;
+ }
+ async function xml(path){
+  const e=files.get(path);if(!e)throw Error('Excel 缺少必要資料：'+path);
+  if(e.start+30>bytes.length||view.getUint32(e.start,true)!==0x04034b50)throw Error('Excel 檔案損毀。');
+  const pos=e.start+30+view.getUint16(e.start+26,true)+view.getUint16(e.start+28,true);if(pos+e.size>bytes.length)throw Error('Excel 資料不完整。');
+  let data=bytes.slice(pos,pos+e.size);
+  if(e.method===8){
+   let stream;try{stream=new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate-raw'));}catch(_){throw Error('此瀏覽器不支援 Excel 解壓縮，請使用新版 Chrome 或 Edge。');}
+   const reader=stream.getReader(),chunks=[];let size=0;
+   try{while(true){const {value,done}=await reader.read();if(done)break;size+=value.length;if(size>e.rawSize||size>12*1024*1024)throw Error('Excel 解壓縮內容過大。');chunks.push(value);}}catch(err){await reader.cancel().catch(()=>{});throw err;}
+   data=new Uint8Array(size);let at=0;for(const c of chunks){data.set(c,at);at+=c.length;}
+  }else if(e.method!==0)throw Error('不支援此 Excel 壓縮格式。');
+  if(data.length!==e.rawSize)throw Error('Excel 資料長度不一致。');
+  const doc=new DOMParser().parseFromString(decoder.decode(data),'application/xml');if(doc.querySelector('parsererror')||doc.doctype)throw Error('Excel XML 內容無法解析。');return doc;
+ }
+ const elements=(node,name)=>Array.from(node.getElementsByTagNameNS('*',name));
+ const strings=files.has('xl/sharedStrings.xml')?elements(await xml('xl/sharedStrings.xml'),'si').map(si=>elements(si,'t').map(t=>t.textContent).join('')):[];
+ const rels=elements(await xml('xl/_rels/workbook.xml.rels'),'Relationship'),workbook=await xml('xl/workbook.xml'),sheets=elements(workbook,'sheet');
+ if(sheets.length>30)throw Error('請將名單整理為 30 個以內的工作表。');
+ const result=[];
+ for(const sheet of sheets){
+  const rid=sheet.getAttribute('r:id')||sheet.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships','id'),rel=rels.find(r=>r.getAttribute('Id')===rid);
+  if(!rel||rel.getAttribute('TargetMode')==='External')continue;
+  const target=rel.getAttribute('Target'),path=target.startsWith('/')?target.slice(1):'xl/'+target.replace(/^\.\//,'');
+  if(!path.startsWith('xl/')||path.includes('..'))throw Error('不支援此 Excel 工作表路徑。');
+  const doc=await xml(path),rows=[];
+  for(const row of elements(doc,'row')){
+   const cells=[];let formula=false;
+   for(const cell of elements(row,'c')){
+    const ref=cell.getAttribute('r')||'',letters=(ref.match(/^[A-Z]+/)||[])[0];if(!letters)throw Error('Excel 儲存格座標不正確。');
+    let col=0;for(const ch of letters)col=col*26+ch.charCodeAt(0)-64;
+    if(col>100)continue;
+    const type=cell.getAttribute('t'),v=elements(cell,'v')[0]?.textContent||'';
+    cells[col-1]=type==='s'?(strings[Number(v)]||''):type==='inlineStr'?elements(cell,'t').map(t=>t.textContent).join(''):v;
+    if(elements(cell,'f').length)formula=true;
+   }
+   if(cells.some(v=>String(v).trim()))rows.push({number:Number(row.getAttribute('r')),cells,formula});
+   if(rows.length>3000)throw Error('單一工作表超過 3000 列，請分批匯入。');
+  }
+  if(rows.length)result.push({name:sheet.getAttribute('name'),rows});
+ }
+ if(!result.length)throw Error('檔案沒有可讀取的名單。');return result;
+}
+
+const teachingRosterViews=new Map(),rosterPageViews=new Map();
+let teachingRosterUpload=null;
+function rosterCurrent(){return teachingRosterViews.get(String(teachingBenefitYear));}
+function rosterClear(){rosterPageViews.clear();teachingRosterViews.clear();teachingRosterUpload=null;const host=$('#teachingRosterPanel');if(host)host.innerHTML='';}
+function rosterButton(label,action,attrs=''){return `<button type="button" class="ghost" data-roster-action="${action}" ${attrs}>${label}</button>`;}
+function renderTeachingRoster(){
+ const host=$('#teachingRosterPanel');if(!host)return;const expanded=Array.from(host.children).filter(e=>e.tagName==='DETAILS').map(e=>e.open);
+ const view=rosterCurrent(),s=view?.state,a=view?.analysis;
+ const pageKey=String(teachingBenefitYear);if(!rosterPageViews.has(pageKey))rosterPageViews.set(pageKey,{teacherPage:0,coursePage:0,courseId:'',search:''});const paging=rosterPageViews.get(pageKey);
+ const teachers=(s?.teachers||[]).filter(t=>[t.name,t.hospital,t.department].join(' ').includes(paging.search));
+ const teacherById=new Map((s?.teachers||[]).map(t=>[t.id,t]));
+ paging.teacherPage=Math.min(paging.teacherPage,Math.max(0,Math.ceil(teachers.length/50)-1));
+ const selectedCourse=s?.courses.find(c=>c.id===paging.courseId)||s?.courses[0];paging.courseId=selectedCourse?.id||'';
+ paging.coursePage=Math.min(paging.coursePage,Math.max(0,Math.ceil((selectedCourse?.rows.length||0)/50)-1));
+ const matchById=new Map((a?.courses.find(c=>c.id===paging.courseId)?.rows||[]).map(r=>[r.id,r]));
+ const pager=(type,total)=>'<div class="actions"><button type="button" class="ghost" data-roster-page="'+type+'" data-step="-1" '+(paging[type+'Page']===0?'disabled':'')+'>上一頁</button><span>第 '+(paging[type+'Page']+1)+'／'+Math.max(1,Math.ceil(total/50))+' 頁，共 '+total+' 筆（每頁 50 筆）</span><button type="button" class="ghost" data-roster-page="'+type+'" data-step="1" '+((paging[type+'Page']+1)*50>=total?'disabled':'')+'>下一頁</button></div>';
+ host.innerHTML=`<h4>教師名單比對與年度優惠草稿</h4><p>先匯入基準教師名單，醫院／部科可留白。後續課程提供明確歸屬時自動補入；同名、衝突及無法比對的紀錄交由承辦人確認。不使用 AI；只將選定欄位傳至平台後端。</p>${rosterButton('載入／重新載入教師名單','load')}${view?`<p>基準教師 ${a.teacherCount} 筆｜已比對支援 ${a.supportedCount} 人｜${s.courses.length} 門課｜待確認 ${a.issues.length} 項。<b>未完成前不能建立可發布的優惠。</b></p><label>本年度優惠採用的統計期間<input id="rosterPeriod" maxlength="200" placeholder="例如：115 學年度，依承辦人確認的起迄期間" value="${esc(s.period)}"></label>${rosterButton('儲存統計期間','period')}
+ <details open><summary>匯入 Excel 名單</summary><p class="muted">只讀取你選定的工作表與姓名、醫院、部科欄位。每列一位教師，最多 2000 筆；支援 .xlsx（3 MB 內）。不需要醫院／部科時可選「未提供」，不要把學校聘任學科當作醫院部科。</p><div class="grid"><label>名單用途<select id="rosterImportKind"><option value="baseline">基準教師名單（分母）</option><option value="course">課程實際授課名單（支援人數）</option></select></label><label>選擇 Excel<input id="rosterFile" type="file" accept=".xlsx"></label></div><div id="rosterImportEditor"></div></details>
+ <details ${a.issues.length?'open':''}><summary>待確認項目／基準教師名單</summary><p class="muted">每列修改後請先按「儲存歸屬／姓名」。未授課教師仍保留在分母，因此所有基準教師都必須有醫院／部科。名稱不同的同一部科，請先統一名稱；系統不猜測別名。</p>${a.duplicates.map(g=>`<div class="notice">${esc(g.name)}：${g.ids.length} 筆同名資料 ${rosterButton('確認同一人，合併','merge',`data-name="${esc(g.name)}" data-id="${esc(g.ids[0])}"`)} ${rosterButton('確認為不同人，分別保留','distinct',`data-name="${esc(g.name)}"`)}</div>`).join('')}
+ <div class="actions"><input id="rosterTeacherSearch" aria-label="搜尋教師名單" placeholder="搜尋姓名、醫院或部科" value="${esc(paging.search)}"><button type="button" class="ghost" id="rosterSearchBtn">搜尋</button></div>${pager('teacher',teachers.length)}<div style="overflow-x:auto;max-height:420px"><table><thead><tr><th>姓名</th><th>醫院</th><th>部科</th><th>來源／操作</th></tr></thead><tbody>${teachers.slice(paging.teacherPage*50,(paging.teacherPage+1)*50).map(t=>`<tr data-roster-teacher="${esc(t.id)}"><td><input aria-label="教師姓名" data-field="name" maxlength="80" value="${esc(t.name)}"></td><td><input aria-label="教師醫院" data-field="hospital" maxlength="80" placeholder="待補" value="${esc(t.hospital)}"></td><td><input aria-label="教師部科" data-field="department" maxlength="80" placeholder="待補" value="${esc(t.department)}"></td><td><small>${esc(t.source)}／列 ${esc(t.sourceRow)}${t.mappingSource?'<br>'+esc(t.mappingSource):''}</small><br>${rosterButton('儲存歸屬／姓名','teacher',`data-id="${esc(t.id)}"`)} ${rosterButton('移除誤匯入教師','removeTeacher',`data-id="${esc(t.id)}"`)}</td></tr>`).join('')}</tbody></table></div></details>
+ <details ${a.issues.some(i=>i.courseId)?'open':''}><summary>已匯入課程與比對結果</summary><label>選擇要查看的課程<select id="rosterCourseSelect">${s.courses.map(c=>`<option value="${esc(c.id)}" ${c.id===paging.courseId?'selected':''}>${esc(c.title)}／${esc(c.period)}</option>`).join('')}</select></label>${pager('course',selectedCourse?.rows.length||0)}${(selectedCourse?[selectedCourse]:[]).map(c=>`<h5>${esc(c.title)}｜${esc(c.period)}（${c.rows.length} 筆）</h5><p class="muted">${esc(c.source)} ${rosterButton('移除本課程紀錄','removeCourse',`data-id="${esc(c.id)}"`)}</p><div style="overflow-x:auto;max-height:360px"><table><thead><tr><th>授課名單姓名／原部科</th><th>比對結果</th><th>人工確認（需要時）</th></tr></thead><tbody>${c.rows.slice(paging.coursePage*50,(paging.coursePage+1)*50).map(r=>{const m=matchById.get(r.id),t=teacherById.get(m.teacherId),label={matched:'已比對',unmatched:'不在基準名單',ambiguous:'同名待選擇',conflict:'部科衝突',excluded:'不計入'}[m.status];return `<tr data-roster-row="${esc(r.id)}"><td>${esc(r.name)}<br>${esc(r.hospital)}／${esc(r.department)}</td><td>${label}${t?'<br>'+esc(t.name+'／'+t.hospital+'／'+t.department):''}${r.excludedReason?'<br>'+esc(r.excludedReason):''}</td><td><details><summary>確認或修正</summary><select aria-label="對應基準教師" data-field="teacherId"><option value="">請選擇</option>${s.teachers.filter(t=>t.id===m.teacherId).map(t=>`<option value="${esc(t.id)}" ${m.teacherId===t.id?'selected':''}>${esc(t.name+'／'+(t.hospital||'待補醫院')+'／'+(t.department||'待補部科')+'／原列 '+t.sourceRow)}</option>`).join('')}</select><label><input type="checkbox" data-field="affiliationConfirmed" ${r.affiliationConfirmed?'checked':''}>已確認以基準教師的醫院／部科為準</label><input aria-label="不計入原因" data-field="excludedReason" maxlength="200" placeholder="若不計入，必須填寫原因" value="${esc(r.excludedReason)}">${rosterButton('儲存比對確認','resolve',`data-course="${esc(c.id)}" data-id="${esc(r.id)}"`)}</details></td></tr>`;}).join('')}</tbody></table></div>`).join('')||'<p>尚未匯入課程。</p>'}</details>
+ <h5>計算預覽（尚未發布）</h5><p class="muted">有待確認項目時，以下只是部分資料，不可視為正式優惠資格。</p><table><thead><tr><th>醫院／部科</th><th>支援／總人數</th><th>場租實收</th></tr></thead><tbody>${a.entries.map(e=>`<tr><td>${esc(e.hospital)}／${esc(e.department)}</td><td>${e.supported}／${e.total}</td><td>${a.ready?esc(teachingBenefitTier(e.total,e.supported)?.method||'待確認'):'資料未齊，暫不判定'}</td></tr>`).join('')}</tbody></table>
+ <label><input id="rosterComplete" type="checkbox">我已確認統計期間、完整基準教師名單及本期全部實際授課名單，醫院／部科歸屬無誤。</label>${rosterButton('產生年度優惠草稿','build',a.ready?'':'disabled')}<p class="muted">產生草稿後，仍需使用下方「確認並啟用此年度名單」。不會自動改動既有案件。</p>`:'<p>選定年度後載入；名單存於後端，僅登入管理者可讀取。</p>'}`;
+ if(expanded.length)Array.from(host.children).filter(e=>e.tagName==='DETAILS').forEach((e,i)=>e.open=expanded[i]??e.open);
+ const redraw=()=>{if(teachingRosterUpload){toast('請先完成匯入，或重新載入清除預覽，再切換名單頁。');return false;}const changed=Array.from(host.querySelectorAll('[data-roster-teacher] input,[data-roster-row] input,[data-roster-row] select,#rosterPeriod')).some(e=>e.tagName==='SELECT'?e.value!==(Array.from(e.options).find(o=>o.defaultSelected)?.value||''):e.type==='checkbox'?e.checked!==e.defaultChecked:e.value!==e.defaultValue);if(changed&&!confirm('尚有未儲存的名單修改，確定捨棄並切換顯示？'))return false;return true;};
+ host.querySelectorAll('[data-roster-page]').forEach(b=>b.onclick=()=>{if(!redraw())return;paging[b.dataset.rosterPage+'Page']+=Number(b.dataset.step);renderTeachingRoster();});
+ if(s){$('#rosterSearchBtn').onclick=()=>{if(!redraw())return;paging.search=$('#rosterTeacherSearch').value.trim();paging.teacherPage=0;renderTeachingRoster();};$('#rosterCourseSelect').onchange=e=>{if(!redraw()){e.target.value=paging.courseId;return;}paging.courseId=e.target.value;paging.coursePage=0;renderTeachingRoster();};}
+ host.querySelectorAll('[data-roster-action]').forEach(b=>b.onclick=()=>rosterAction(b));
+ host.querySelectorAll('select[data-field="teacherId"]').forEach(select=>{select.onfocus=()=>{if(select.dataset.loaded)return;const value=select.value;select.innerHTML='<option value="">請選擇</option>'+s.teachers.map(t=>'<option value="'+esc(t.id)+'">'+esc(t.name+'／'+(t.hospital||'待補')+'／'+(t.department||'待補')+'／原列 '+t.sourceRow)+'</option>').join('');select.value=value;select.dataset.loaded='true';};});
+ if(s){$('#rosterFile').onchange=rosterOpenFile;$('#rosterImportKind').onchange=()=>{teachingRosterUpload=null;$('#rosterFile').value='';$('#rosterImportEditor').innerHTML='';};}
+}
+async function rosterRequest(action,payload,button){
+ const year=Number(teachingBenefitYear),token=adminToken;let result=null;
+ await runBusyAction('teachingRoster',button,'處理中…',async()=>{
+  const controls=Array.from(document.querySelectorAll('#teachingBenefitSettings input,#teachingBenefitSettings textarea,#teachingBenefitSettings select,#teachingBenefitSettings button')).map(e=>[e,e.disabled]);controls.forEach(([e])=>e.disabled=true);
+  try{const r=await api(action,{adminToken:token,year,...payload});if(!r.ok)throw Error(r.error||'教師名單操作失敗。');if(token!==adminToken||!admin)return;
+   if(action==='buildTeachingRosterDraft'){teachingBenefitYears=teachingBenefitYears.filter(s=>s.year!==year).concat(r.state);teachingBenefitEditors.delete(String(year));}
+   else teachingRosterViews.set(String(year),r);
+   teachingRosterUpload=null;result=r;toast(r.message||'教師名單已載入。');
+  }catch(e){toast(e.message);}finally{if(token===adminToken&&Number(teachingBenefitYear)===year){if(result)renderTeachingBenefitSettings();else controls.forEach(([e,disabled])=>e.disabled=disabled);}}
+ },{message:'教師名單處理中…',lockCase:false});return result;
+}
+async function rosterAction(button){
+ const op=button.dataset.rosterAction,v=rosterCurrent(),s=v?.state;let p={revision:s?.revision,operation:op};
+ if(op==='load'){if(teachingRosterUpload&&!confirm('重新載入將清除尚未匯入的檔案預覽，確定繼續？'))return;return rosterRequest('getTeachingRoster',{},button);}
+ if(!s)return;
+ if(op==='period')p.period=$('#rosterPeriod').value;
+ if(op==='teacher'){const row=button.closest('tr');p.id=button.dataset.id;for(const f of ['name','hospital','department'])p[f]=row.querySelector(`[data-field="${f}"]`).value;}
+ if(op==='merge'||op==='distinct'){if(!confirm(op==='merge'?'確認這些同名紀錄是同一位老師？合併後分母只計一人。':'確認同名紀錄屬於不同老師？未來課程須逐筆指定對應人員。'))return;p={...p,operation:'duplicate',mode:op,name:button.dataset.name,keepId:button.dataset.id};}
+ if(op==='resolve'){const row=button.closest('tr');p.courseId=button.dataset.course;p.rowId=button.dataset.id;p.teacherId=row.querySelector('[data-field="teacherId"]').value;p.excludedReason=row.querySelector('[data-field="excludedReason"]').value;p.affiliationConfirmed=row.querySelector('[data-field="affiliationConfirmed"]').checked;}
+ if(op==='removeTeacher'){const reason=prompt('移除基準教師會減少分母，相關授課比對也須重新確認。請填寫誤匯入或不適用的原因：');if(!reason)return;p.id=button.dataset.id;p.reason=reason;}
+ if(op==='removeCourse'){const reason=prompt('移除這門課的授課紀錄會影響尚未發布的計算；已補入的教師部科會保留。請填移除原因：');if(!reason)return;p.id=button.dataset.id;p.reason=reason;}
+ if(op==='build'){
+  if(!$('#rosterComplete').checked){toast('請先勾選完整名單確認。');return;}
+  if(teachingEditor()?.dirty){toast('年度優惠有未儲存修改，請先儲存或重新載入。');return;}
+  if(!confirm('依名單重新建立年度優惠草稿？原草稿會被取代，已啟用版本與既有案件不變。'))return;
+  return rosterRequest('buildTeachingRosterDraft',{revision:s.revision,benefitRevision:teachingState(teachingBenefitYear).revision,completeConfirmed:true},button);
+ }
+ return rosterRequest('mutateTeachingRoster',p,button);
+}
+async function rosterOpenFile(){
+ const file=$('#rosterFile').files[0],year=teachingBenefitYear,token=adminToken,kind=$('#rosterImportKind').value;if(!file)return;
+ $('#rosterImportEditor').textContent='正在讀取 Excel…';teachingRosterUpload=null;
+ try{const sheets=await rosterReadXlsx(file);if(token!==adminToken||year!==teachingBenefitYear||$('#rosterFile')?.files[0]!==file)return;teachingRosterUpload={file:file.name,sheets,kind,year,token};rosterImportEditor();}catch(e){if(token===adminToken&&year===teachingBenefitYear){$('#rosterImportEditor').textContent=e.message;}}
+}
+function rosterImportEditor(){
+ const u=teachingRosterUpload;if(!u)return;const box=$('#rosterImportEditor');
+ box.innerHTML=`<label>工作表<select id="rosterSheet">${u.sheets.map((s,i)=>`<option value="${i}">${esc(s.name)}</option>`).join('')}</select></label><label>標題所在列<select id="rosterHeader"></select></label><div id="rosterColumns"></div>${u.kind==='course'?'<div class="grid"><label>課程名稱<input id="rosterCourseTitle" maxlength="120"></label><label>實際授課日期／期間<input id="rosterCoursePeriod" maxlength="120" placeholder="例如：115 年 9 月 15 日"></label></div><label><input type="checkbox" id="rosterActual">確認上傳的是實際授課教師，不是尚未執行的排課名單。</label>':''}<div id="rosterPreview"></div><p class="muted">空白姓名列不會匯入；同名紀錄先保留，待承辦人確認。公式欄位只讀儲存值，請先在 Excel 更新並核對。</p>${rosterButton('確認匯入並儲存名單','import')}`;
+ function sheetChanged(){const sheet=u.sheets[Number($('#rosterSheet').value)];$('#rosterHeader').innerHTML=sheet.rows.slice(0,30).map((r,i)=>`<option value="${i}">第 ${r.number} 列：${esc(r.cells.filter(Boolean).slice(0,6).join('／'))}</option>`).join('');const idx=sheet.rows.slice(0,30).findIndex(r=>r.cells.some(v=>/^(中文姓名|姓名|教師姓名|老師姓名|授課教師)$/.test(String(v).trim())));$('#rosterHeader').value=String(Math.max(0,idx));columnsChanged();}
+ function columnsChanged(){const sheet=u.sheets[Number($('#rosterSheet').value)],header=sheet.rows[Number($('#rosterHeader').value)];const fields=[['name','姓名（必選）'],['hospital','醫院（可留白）'],['department','醫院部科（可留白）']];$('#rosterColumns').innerHTML='<div class="grid">'+fields.map(([f,label])=>`<label>${label}<select id="rosterCol_${f}"><option value="">未提供</option>${Array.from({length:header.cells.length},(_,i)=>`<option value="${i}">第 ${i+1} 欄：${esc(header.cells[i]||'無標題')}</option>`).join('')}</select></label>`).join('')+'</div>';
+  const patterns={name:/^(中文姓名|姓名|教師姓名|老師姓名|授課教師)$/,hospital:/^(醫院|所屬醫院|任職醫院)$/,department:/^(部科|科別|醫院部科|所屬部科)$/};for(const [f] of fields){const i=header.cells.findIndex(v=>patterns[f].test(String(v).trim()));$('#rosterCol_'+f).value=i>=0?String(i):'';$('#rosterCol_'+f).onchange=preview;}preview();}
+ function rows(){const sh=u.sheets[Number($('#rosterSheet').value)],start=Number($('#rosterHeader').value),col=Object.fromEntries(['name','hospital','department'].map(f=>[f,$('#rosterCol_'+f).value]));if(col.name==='')throw Error('請選擇姓名欄位。');const chosen=Object.values(col).filter(v=>v!=='');if(new Set(chosen).size!==chosen.length)throw Error('姓名、醫院與部科不能選同一欄。');const data=sh.rows.slice(start+1).filter(r=>String(r.cells[Number(col.name)]||'').trim()).map(r=>Object.fromEntries([['sourceRow',String(r.number)],...Object.entries(col).map(([f,i])=>[f,i===''?'':String(r.cells[Number(i)]||'').trim()])]));if(data.length>2000)throw Error('每次最多匯入 2000 筆。');return {data,source:u.file+'／'+sh.name};}
+ function preview(){try{const {data}=rows();$('#rosterPreview').innerHTML=`<p>預計匯入 ${data.length} 筆，請核對前 8 筆：</p><table><thead><tr><th>姓名</th><th>醫院</th><th>部科</th></tr></thead><tbody>${data.slice(0,8).map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.hospital||'待補')}</td><td>${esc(r.department||'待補')}</td></tr>`).join('')}</tbody></table>`;}catch(e){$('#rosterPreview').textContent=e.message;}}
+ $('#rosterSheet').onchange=sheetChanged;$('#rosterHeader').onchange=columnsChanged;sheetChanged();
+ box.querySelector('[data-roster-action="import"]').onclick=async function(){try{if(u!==teachingRosterUpload||u.token!==adminToken||u.year!==teachingBenefitYear)return;const {data,source}=rows();if(!data.length)throw Error('沒有可匯入的教師。');await rosterRequest('mutateTeachingRoster',{revision:rosterCurrent().state.revision,operation:'import',kind:u.kind,source,rows:data,title:$('#rosterCourseTitle')?.value,period:$('#rosterCoursePeriod')?.value,actualConfirmed:$('#rosterActual')?.checked===true},this);}catch(e){toast(e.message);}};
+}
+
+let navigationRevision=0,settingsLoadRevision=0;
+const settingsBusyControls=new WeakMap();
+async function show(id){
+ if(isAdminView(id)&&(!admin||!adminMode))id=admin?'home':'loginView';
+ const revision=++navigationRevision;
+ $$('.view').forEach(v=>v.classList.toggle('active',v.id===id));
+ $$('.nav button').forEach(b=>b.classList.toggle('active',(b.dataset.view||b.dataset.viewBtn)===id));renderShell();
+ const current=()=>revision===navigationRevision&&document.getElementById(id)?.classList.contains('active');
+ if(id==='venue'){await Promise.all([loadVenueSettings(),loadLocationSettings()]);if(current())renderVenueIntro();return;}
+ if(id==='availability'){await renderAvailability();return;}
+ if(id==='pricing'||id==='apply'){
+  await Promise.all([loadBookingConfig(),loadConsumableSettings(),loadSchoolCalendarSettings()]);if(!current())return;
+  if(id==='pricing')renderPricing();else {renderConsumableOptions();renderRoomOptions();updateApplicationReview();}return;
+ }
+ if(id==='settings'){await loadSelectedSettingsSection(currentSettingsSection());return;}
+ if(isAdminView(id)){
+  if(id==='bookingCalendar')await Promise.all([loadBookingConfig(),refreshAdmin()]);else await refreshAdmin();
+  if(current()&&admin)renderAll();
+ }
+}
+function selectSettingsSection(section){
+ selectSettingsVisibility(section);
+ if(admin&&adminMode&&$('#settings')?.classList.contains('active'))return loadSelectedSettingsSection(currentSettingsSection());
+}
+async function loadSelectedSettingsSection(key){
+ const token=adminToken,revision=++settingsLoadRevision;selectSettingsVisibility(key);
+ const panel=document.querySelector('[data-settings-section="'+key+'"]');if(panel)panel.setAttribute('aria-busy','true');
+ const controls=[...Array.from(panel?.querySelectorAll('input,textarea,select,button')||[]),$('#saveSettingsBtn'),$('#resetSettingsBtn')].filter(Boolean);controls.forEach(el=>{const busy=settingsBusyControls.get(el)||{count:0,disabled:el.disabled};busy.count++;settingsBusyControls.set(el,busy);el.disabled=true;});
+ // Keep existing form values visible while reading; only the selected section is loaded/rendered.
+ try{
+  if(['pricing','venueStatus','roomBlock'].includes(key))await loadBookingConfig();
+  else if(key==='teachingBenefits')await loadTeachingBenefits();
+  else if(key==='venueIntro')await loadVenueSettings();
+  else if(key==='location')await loadLocationSettings();
+  else if(key==='schoolCalendar')await loadSchoolCalendarSettings();
+  else if(key==='notification')await loadNotificationSettings();
+  else if(key==='consumables')await loadConsumableSettings();
+  if(token!==adminToken||!admin||revision!==settingsLoadRevision||!$('#settings')?.classList.contains('active'))return;
+  renderSettings();
+ }finally{if(panel)panel.removeAttribute('aria-busy');controls.forEach(el=>{const busy=settingsBusyControls.get(el);if(busy&&--busy.count===0){if(el.isConnected)el.disabled=busy.disabled;settingsBusyControls.delete(el);}});}
+}
+function renderSettings(){
+ const key=currentSettingsSection();
+ if(key==='pricing'||key==='venueStatus')renderRateAndStatusSettings();
+ else if(key==='teachingBenefits')renderTeachingBenefitSettings();
+ else if(key==='venueIntro')renderVenueIntroSettings();
+ else if(key==='location')renderLocationSettings();
+ else if(key==='schoolCalendar')renderSchoolCalendarSettings();
+ else if(key==='notification')renderNotificationSettings();
+ else if(key==='consumables')renderConsumableSettings();
+ else if(key==='roomBlock'){renderBlockList();renderLegacyBookingImport();}
+ selectSettingsVisibility(key);
+}
+function renderAll(){
+ ensureSelectedCase();renderShell();
+ if(!admin){renderMetrics();renderPending();renderReviewCenter();renderAdminCalendar();renderBookingCalendar();renderBlockList();return;}
+ const id=document.querySelector('.view.active')?.id;
+ if(id==='dashboard'){renderMetrics();renderPending();}
+ else if(id==='allCases')renderReviewCenter();
+ else if(id==='adminCalendar')renderAdminCalendar();
+ else if(id==='bookingCalendar'){renderBookingCalendar();renderBlockList();}
 }
 
 </script>
