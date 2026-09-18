@@ -517,6 +517,7 @@ const bankTransferInfoText=`銀行匯款資訊
 - 匯款證明（JPG、PNG）`;
 let teachingBenefitYears=[],teachingBenefitLoaded=false,teachingBenefitError='',teachingBenefitYear='';
 const teachingBenefitEditors=new Map(),teachingBenefitSelections=new Map();
+const aiReviewViews=new Map(),aiReviewPreviews=new Map();
 let systemSettings=loadSettings();
 // Clear legacy password storage. New session credentials stay in memory only.
 [AK,TK,"shutien-admin-mode-v1"].forEach(key=>sessionStorage.removeItem(key));
@@ -967,7 +968,7 @@ function clearAdminSession(){
  clearTimeout(adminSessionTimer);adminSessionTimer=null;
  admin=false;adminMode=false;adminToken="";adminLoginChallenge="";adminLoginEmail="";
  [AK,TK,"shutien-admin-mode-v1"].forEach(key=>sessionStorage.removeItem(key));
- data=[];selectedCaseNo="";activeCaseNo="";unsavedBillingCases.clear();savedApprovalSignatures.clear();supplementDrafts.clear();supplementPreviews.clear();teachingBenefitYears=[];teachingBenefitLoaded=false;teachingBenefitError="";teachingBenefitYear="";teachingBenefitEditors.clear();teachingBenefitSelections.clear();
+ data=[];selectedCaseNo="";activeCaseNo="";unsavedBillingCases.clear();savedApprovalSignatures.clear();supplementDrafts.clear();supplementPreviews.clear();aiReviewViews.clear();aiReviewPreviews.clear();teachingBenefitYears=[];teachingBenefitLoaded=false;teachingBenefitError="";teachingBenefitYear="";teachingBenefitEditors.clear();teachingBenefitSelections.clear();
  invalidateCalendarCaches();
  $("#pass").value="";$("#userMenuList").classList.add("hide");
  closeCalendarModal();renderAll();renderShell();
@@ -1117,6 +1118,7 @@ ${x.directorReturnReason?`<div class="notice"><b>主任退回原因：</b><br>${
   <section class="detail-section"><h3>場地</h3>${kv("使用空間",rooms.join("、")||"未填")}</section>
   <section class="detail-section"><h3>動物需求</h3>${kv("是否需要",needsAnimal(x)?"需要":"不需要")}${kv("種類",animalTypeText(x))}${kv("數量",animalCountText(x))}${kv("重量",animalWeightText(x))}</section>
   ${attachmentManagerHtml(x,paymentRecord(x))}
+  ${aiReviewHtml(x)}
   ${supplementNoticeHtml(x)}
   ${caseRevisionHtml(x)}
   <section class="detail-section wide"><h3>費用明細／核定金額</h3>${teachingBenefitCaseHtml(x)}${feeApprovalLayout(x,c,billing)}</section>
@@ -1209,7 +1211,7 @@ function processHtml(status){let s=normalizeStatus(status);if(s==="已退件")re
 function timelineDisplayStatus(status){return statusDisplayText(status)}
 function timelineHtml(x){let events=[...(Array.isArray(x.timeline)?x.timeline:[]),...(paymentRecord(x).timeline||[])];if(!events.length&&normalizeStatus(x.status)==="待主任核定")events=[{date:"-",time:"",status:"完成承辦審核",actor:"承辦人"},{date:"-",time:"",status:"送主任核定",actor:"承辦人"}];if(!events.length)events=[{date:"-",time:"",status:normalizeStatus(x.status),actor:"系統"}];return events.map(e=>`<div class="stage active"><span><b>${esc(timelineDisplayStatus(e.status||""))}</b><br><span class="muted">${esc(e.date||"")} ${esc(e.time||"")}｜${esc(e.actor||"")}</span></span></div>`).join("")}
 function actionLogsHtml(x){let logs=Array.isArray(x.actionLogs)?x.actionLogs:[];return logs.length?logs.map(e=>`<div class="stage active"><span><b>${esc(e.action||"")}</b><br><span class="muted">${esc(e.date||"")} ${esc(e.time||"")}｜${esc(e.actor||"")}</span></span></div>`).join(""):"<p class='muted'>尚無操作紀錄。</p>"}
-function bindReviewCenter(){initTimeSelects();$$("[data-case-filter]").forEach(el=>el.onclick=()=>{if(adminActionLocked){toast("案件處理中，請等待完成後再切換案件。");return}currentCaseFilter=el.dataset.caseFilter;renderReviewCenter()});let search=$("#caseSearchInput");if(search)search.oninput=()=>{if(adminActionLocked)return;caseSearchTerm=search.value;renderReviewCenter()};$$("[data-select-case]").forEach(el=>el.onclick=()=>{if(adminActionLocked){toast("案件處理中，請等待完成後再切換案件。");return}setActiveCaseNo(el.dataset.selectCase);renderReviewCenter()});$$("[data-copy-case]").forEach(el=>el.onclick=()=>copyCaseNo(el.dataset.copyCase));$$("[data-workflow]").forEach(el=>el.onclick=()=>updateWorkflow(null,el.dataset.nextStatus,el));$$("[data-billing-method]").forEach(el=>el.onchange=()=>applyBillingMethod(activeCaseNo,el.value));$$("[data-approved-amount]").forEach(el=>el.oninput=()=>markApprovalDirty(activeCaseNo));$$("[data-save-billing]").forEach(el=>el.onclick=()=>saveBillingAmount(null,el));$$("[data-send-director]").forEach(el=>el.onclick=()=>sendDirectorAfterSave(null,el));$$("[data-resend-director]").forEach(el=>el.onclick=()=>resendDirectorReviewNotification(el.dataset.resendDirector||activeCaseNo,el));$$("[data-save-revision]").forEach(el=>el.onclick=()=>saveCaseRevision(el.dataset.saveRevision||activeCaseNo,el));$$("[data-toggle-fee-adjustment]").forEach(el=>el.onclick=()=>{adjustingFeeCaseNo=adjustingFeeCaseNo===activeCaseNo?"":activeCaseNo;renderReviewCenter()});$$("[data-cancel-fee-adjustment]").forEach(el=>el.onclick=()=>{adjustingFeeCaseNo="";renderReviewCenter()});$$("[data-add-fee-adjustment]").forEach(el=>el.onclick=()=>addFeeAdjustment(activeCaseNo,el));$$("[data-void-fee-adjustment]").forEach(el=>el.onclick=()=>voidFeeAdjustment(activeCaseNo,el.dataset.adjustmentId,el));$$("[data-handler-opinion]").forEach(el=>el.onchange=()=>upd(activeCaseNo,{handlerOpinion:el.value,actor:"後台管理者"}));$$("[data-director-opinion]").forEach(el=>el.onchange=()=>upd(activeCaseNo,{directorOpinion:el.value,actor:"後台管理者"}));$$("[data-return-reason]").forEach(el=>el.onchange=()=>upd(activeCaseNo,{returnReason:el.value,actor:"後台管理者"}));bindTeachingBenefitCaseControls();bindSupplementControls();bindPaymentControls()}
+function bindReviewCenter(){initTimeSelects();$$("[data-case-filter]").forEach(el=>el.onclick=()=>{if(adminActionLocked){toast("案件處理中，請等待完成後再切換案件。");return}currentCaseFilter=el.dataset.caseFilter;renderReviewCenter()});let search=$("#caseSearchInput");if(search)search.oninput=()=>{if(adminActionLocked)return;caseSearchTerm=search.value;renderReviewCenter()};$$("[data-select-case]").forEach(el=>el.onclick=()=>{if(adminActionLocked){toast("案件處理中，請等待完成後再切換案件。");return}setActiveCaseNo(el.dataset.selectCase);renderReviewCenter()});$$("[data-copy-case]").forEach(el=>el.onclick=()=>copyCaseNo(el.dataset.copyCase));$$("[data-workflow]").forEach(el=>el.onclick=()=>updateWorkflow(null,el.dataset.nextStatus,el));$$("[data-billing-method]").forEach(el=>el.onchange=()=>applyBillingMethod(activeCaseNo,el.value));$$("[data-approved-amount]").forEach(el=>el.oninput=()=>markApprovalDirty(activeCaseNo));$$("[data-save-billing]").forEach(el=>el.onclick=()=>saveBillingAmount(null,el));$$("[data-send-director]").forEach(el=>el.onclick=()=>sendDirectorAfterSave(null,el));$$("[data-resend-director]").forEach(el=>el.onclick=()=>resendDirectorReviewNotification(el.dataset.resendDirector||activeCaseNo,el));$$("[data-save-revision]").forEach(el=>el.onclick=()=>saveCaseRevision(el.dataset.saveRevision||activeCaseNo,el));$$("[data-toggle-fee-adjustment]").forEach(el=>el.onclick=()=>{adjustingFeeCaseNo=adjustingFeeCaseNo===activeCaseNo?"":activeCaseNo;renderReviewCenter()});$$("[data-cancel-fee-adjustment]").forEach(el=>el.onclick=()=>{adjustingFeeCaseNo="";renderReviewCenter()});$$("[data-add-fee-adjustment]").forEach(el=>el.onclick=()=>addFeeAdjustment(activeCaseNo,el));$$("[data-void-fee-adjustment]").forEach(el=>el.onclick=()=>voidFeeAdjustment(activeCaseNo,el.dataset.adjustmentId,el));$$("[data-handler-opinion]").forEach(el=>el.onchange=()=>upd(activeCaseNo,{handlerOpinion:el.value,actor:"後台管理者"}));$$("[data-director-opinion]").forEach(el=>el.onchange=()=>upd(activeCaseNo,{directorOpinion:el.value,actor:"後台管理者"}));$$("[data-return-reason]").forEach(el=>el.onchange=()=>upd(activeCaseNo,{returnReason:el.value,actor:"後台管理者"}));bindAiReviewControls();bindTeachingBenefitCaseControls();bindSupplementControls();bindPaymentControls()}
 function bindPaymentControls(){$$("[data-confirm-payment]").forEach(el=>el.onclick=()=>confirmPaymentChoice(el.dataset.confirmPayment,el.dataset.paymentChange==="true",el));$$("[data-change-payment]").forEach(el=>el.onclick=()=>{changingPaymentCaseNo=el.dataset.changePayment;renderQueryResult(lastQueriedCase)});$$("[data-cancel-payment-change]").forEach(el=>el.onclick=()=>{changingPaymentCaseNo=null;renderQueryResult(lastQueriedCase)});$$("[data-cancel-application]").forEach(el=>el.onclick=()=>openCancelApplicationModal(el.dataset.cancelApplication));$$("[data-review-cancel]").forEach(el=>el.onclick=()=>reviewCancelApplication(el.dataset.reviewCancel,el.dataset.cancelDecision,el));$$("[data-front-attach],[data-admin-attach]").forEach(el=>el.onchange=()=>{let file=el.files?.[0];if(file)saveAttachment(el.dataset.frontAttach||el.dataset.adminAttach,el.dataset.attachType,file)});$$("[data-attachment-status]").forEach(el=>el.onclick=()=>setAttachmentStatus(el.dataset.attachmentStatus,el.dataset.attachType,el.dataset.attachStatus,el));$$("[data-confirm-paid]").forEach(el=>el.onclick=()=>confirmPaid(el.dataset.confirmPaid,el));$$("[data-save-remittance]").forEach(el=>el.onclick=()=>saveRemittanceInfo(el.dataset.saveRemittance,el));$$("[data-generate-payment-notice]").forEach(el=>el.onclick=()=>generatePaymentNotice(el.dataset.generatePaymentNotice,el));$$("[data-generate-approved-application]").forEach(el=>el.onclick=()=>generateApprovedApplicationForm(el.dataset.generateApprovedApplication,el));$$("[data-send-payment-notice]").forEach(el=>el.onclick=()=>sendPaymentNoticeEmail(el.dataset.sendPaymentNotice,el));$$("[data-copy-bank-account]").forEach(el=>el.onclick=()=>copyText(bankAccountNo,"已複製帳號"));$$("[data-copy-bank-info]").forEach(el=>el.onclick=()=>copyText(bankTransferInfoText,"已複製匯款資訊"))}
 async function reviewCancelApplication(caseNo,decision,btn){let rejectReason="";if(decision==="reject"){rejectReason=prompt("請填寫不同意原因")||"";if(!rejectReason.trim()){toast("請填寫不同意原因");return}}await runBusyAction(`reviewCancel:${caseNo}:${decision}`,btn,"處理中…",async()=>{try{let res=await api("reviewCancelApplication",{adminToken,caseNo,decision,rejectReason,actor:"承辦人"});if(!res.ok)throw new Error(res.error||"取消審核失敗");await refreshAdmin();renderReviewCenter();toast(decision==="approve"?"已同意取消借用":"已不同意取消借用")}catch(err){toast(err.message)}}, {message:"處理取消審核中，請稍候……"})}
 function feeAdjustmentNeedsConfirm(x){return["已繳費","活動完成","已結案","已退件","申請者取消"].includes(normalizeStatus(x.status))}
@@ -1451,6 +1453,54 @@ async function applyTeachingBenefit(caseNo,btn){
   if(!res.ok)throw new Error(res.error||'優惠套用失敗。');if(!res.case)throw new Error('請重新載入案件，確認費用是否儲存。');
   data=data.map(c=>c.caseNo===caseNo?normalizeCases([res.case])[0]:c);teachingBenefitSelections.delete(caseNo);renderAll();toast('年度優惠與費用草稿已儲存，仍須依原流程送主任核定。');
  }catch(err){toast(err.message)}},{message:'套用年度教學優惠中…'});
+}
+
+function aiReviewResultHtml(record,x){
+ const stale=record.stale||record.sourceHash!==x.aiReviewSource, result=record.result;
+ const status={running:'處理中／結果待確認',failed:'未完成',completed:'已產生參考結果'}[record.status]||'結果待確認';
+ const list=(label,values)=>`<h4>${label}</h4>${values.length?`<ul>${values.map(v=>`<li>${esc(v)}</li>`).join('')}</ul>`:'<p class="muted">AI 未提出事項，仍需承辦人核對。</p>'}`;
+ return `<details ${record===aiReviewViews.get(x.caseNo)?.records?.[0]?'open':''}><summary>${esc(status)}｜${esc(formatUploadTime(record.finishedAt||new Date(record.startedAt).toISOString()))}${stale?'｜案件已變更':''}</summary><p class="muted">${esc(record.model)}｜執行者 ${esc(record.actor)}；提示版本 ${record.promptVersion}</p>${stale?'<div class="notice">案件內容已變更，本次結果已過期，不能帶入補件草稿。請重新檢查資料並執行。</div>':''}${record.error?`<p class="notice">${esc(record.error)}</p>`:''}${record.status==='running'?'<p class="muted">請稍後按「查看／更新結果」。若長時間未完成，先確認執行紀錄；系統不會自動重送。</p>':''}${result?`<p><b>AI 預審提示：</b>${esc(result.hint)}（非正式案件狀態）</p><h4>案件摘要</h4><div class="preline">${esc(result.summary)}</div>${list('特殊需求',result.specialNeeds)}${list('可能缺漏資訊',result.missingInformation)}${list('承辦人注意事項',result.staffNotes)}${result.supplementDraft?`<h4>補件事項草稿</h4><div class="preline">${esc(result.supplementDraft)}</div><button type="button" class="ghost" data-ai-use-draft="${esc(x.caseNo)}" data-ai-request="${esc(record.requestId)}" ${stale?'disabled':''}>帶入補件草稿（不寄信）</button>`:''}`:''}</details>`;
+}
+function aiReviewHtml(x){
+ const view=aiReviewViews.get(x.caseNo),preview=aiReviewPreviews.get(x.caseNo),enabled=view?.config?.enabled===true;
+ return `<section class="detail-section wide"><h3>AI 智慧預審助手</h3><p class="muted">僅整理申請表文字，尚未閱讀附件。AI 提示可能有誤，須由承辦人核對；不會自動核准、修改費用或寄信。</p><div class="actions"><button type="button" class="ghost" data-ai-load="${esc(x.caseNo)}">查看／更新結果</button><button type="button" class="ghost" data-ai-prepare="${esc(x.caseNo)}">檢查送往 AI 的內容</button></div>${view?`<p class="muted">${esc(view.config.message)}</p>`:'<p class="muted">按「查看／更新結果」載入 AI 狀態。載入及預覽不會呼叫 AI。</p>'}${preview?`<div class="notice"><b>送出前確認</b><p>已排除姓名、電話、Email 等固定欄位，並遮罩可辨識的聯絡資訊。請再檢查下方文字，移除其他人名、病人資料及不需要的個資；自動遮罩無法保證辨識所有個資。</p><label>將送往 ${esc(view?.config?.provider||'OpenAI')} 的案件文字<textarea rows="10" maxlength="12000" data-ai-text="${esc(x.caseNo)}">${esc(preview.text)}</textarea></label><label style="display:flex;align-items:flex-start;gap:8px"><input type="checkbox" style="width:18px;height:18px;min-height:18px;flex:0 0 18px;margin:3px 0" data-ai-confirm="${esc(x.caseNo)}">我已檢查內容，確認可送至 AI 服務處理。</label><button type="button" class="primary" data-ai-run="${esc(x.caseNo)}" ${enabled?'':'disabled'}>執行 AI 預審</button><p class="muted">每次執行可能產生 API 費用。只送出上方文字，不傳附件、案件編號、費用或優惠名單。</p></div>`:''}<div>${view?.records?.length?view.records.map(r=>aiReviewResultHtml(r,x)).join(''):'<p class="muted">尚無已載入的 AI 預審紀錄。</p>'}</div></section>`;
+}
+function aiReviewCanRefresh(caseNo){if(unsavedBillingCases.has(caseNo)){toast('請先儲存目前費用草稿，再操作 AI 預審。');return false}return true}
+function bindAiReviewControls(){
+ $$('[data-ai-load]').forEach(el=>el.onclick=()=>loadAiReview(el.dataset.aiLoad,el));
+ $$('[data-ai-prepare]').forEach(el=>el.onclick=()=>prepareAiReview(el.dataset.aiPrepare,el));
+ $$('[data-ai-run]').forEach(el=>el.onclick=()=>runAiReview(el.dataset.aiRun,el));
+ $$('[data-ai-text]').forEach(el=>el.oninput=()=>{const p=aiReviewPreviews.get(el.dataset.aiText);if(p)p.text=el.value;const c=$(`[data-ai-confirm="${CSS.escape(el.dataset.aiText)}"]`);if(c)c.checked=false});
+ $$('[data-ai-use-draft]').forEach(el=>el.onclick=()=>useAiReviewDraft(el.dataset.aiUseDraft,el.dataset.aiRequest,el));
+}
+async function loadAiReview(caseNo,btn){
+ if(!aiReviewCanRefresh(caseNo))return;const token=adminToken;
+ await runBusyAction('loadAi:'+caseNo,btn,'載入中…',async()=>{try{const res=await api('getAiReview',{adminToken:token,caseNo});if(!res.ok)throw new Error(res.error||'AI 紀錄讀取失敗。');if(token!==adminToken)return;aiReviewViews.set(caseNo,res);renderReviewCenter()}catch(err){toast(err.message)}},{message:'讀取 AI 預審紀錄中…'});
+}
+async function prepareAiReview(caseNo,btn){
+ if(!aiReviewCanRefresh(caseNo))return;if(aiReviewPreviews.has(caseNo)&&!confirm('重新取得案件文字會取代目前尚未送出的 AI 預覽，確定繼續？'))return;const token=adminToken;
+ await runBusyAction('prepareAi:'+caseNo,btn,'整理中…',async()=>{try{const res=await api('prepareAiReview',{adminToken:token,caseNo});if(!res.ok)throw new Error(res.error||'無法取得案件文字。');if(token!==adminToken)return;aiReviewPreviews.set(caseNo,res);aiReviewViews.set(caseNo,{...(aiReviewViews.get(caseNo)||{records:[]}),config:res.config});renderReviewCenter()}catch(err){toast(err.message)}},{message:'準備 AI 預審文字中…'});
+}
+async function runAiReview(caseNo,btn){
+ if(!aiReviewCanRefresh(caseNo))return;const preview=aiReviewPreviews.get(caseNo),box=$(`[data-ai-confirm="${CSS.escape(caseNo)}"]`);
+ if(!preview||!box?.checked){toast('請先檢查送出內容並勾選確認。');return}const token=adminToken;
+ await runBusyAction('runAi:'+caseNo,btn,'AI 預審中…',async()=>{try{
+  const input=$(`[data-ai-text="${CSS.escape(caseNo)}"]`);if(input)input.disabled=true;box.disabled=true;
+  const res=await api('runAiReview',{adminToken:token,caseNo,requestId:preview.requestId,sourceHash:preview.sourceHash,text:preview.text,confirmed:true});
+  if(!res.ok)throw new Error(res.error||'AI 預審未完成。');if(token!==adminToken)return;
+  aiReviewViews.set(caseNo,res);aiReviewPreviews.delete(caseNo);renderReviewCenter();toast(res.duplicate?'已讀取原請求紀錄，未重複呼叫 AI。':'AI 執行紀錄已更新，請查看結果。');
+ }catch(err){toast(err.message+' 可按「查看／更新結果」確認；重試同一預覽不會重複呼叫 AI。');const input=$(`[data-ai-text="${CSS.escape(caseNo)}"]`);if(input)input.disabled=false;box.disabled=false}},{message:'AI 僅進行文字預審，請稍候…'});
+}
+async function useAiReviewDraft(caseNo,requestId,btn){
+ if(!aiReviewCanRefresh(caseNo))return;const token=adminToken;
+ await runBusyAction('useAiDraft:'+caseNo,btn,'確認中…',async()=>{try{
+  const res=await api('getAiReview',{adminToken:token,caseNo});if(!res.ok)throw new Error(res.error||'無法核對 AI 結果。');if(token!==adminToken)return;
+  const record=res.records.find(r=>r.requestId===requestId),x=data.find(c=>c.caseNo===caseNo);
+  if(!record||record.status!=='completed'||record.stale||!record.result?.supplementDraft)throw new Error('AI 結果已過期或無草稿，請重新執行預審。');
+  if(!['已送件','承辦審核中','待補件','補件完成','待主任核定','承辦修正中','主任核准','待繳費'].includes(normalizeStatus(x?.status)))throw new Error('目前案件狀態不提供補件通知。');
+  if(!confirm('確定以這份 AI 建議取代目前補件事項草稿？帶入後仍須人工核對，這一步不會寄信。'))return;
+  supplementDrafts.set(caseNo,record.result.supplementDraft);supplementPreviews.delete(caseNo);aiReviewViews.set(caseNo,res);renderReviewCenter();toast('已帶入補件草稿，請核對內容，再預覽並確認寄送。');
+ }catch(err){toast(err.message)}},{message:'核對 AI 草稿是否仍適用…'});
 }
 
 </script>
