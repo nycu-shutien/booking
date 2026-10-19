@@ -21,6 +21,10 @@ table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;bor
 .approval-layout{display:grid;grid-template-columns:minmax(0,65%) minmax(300px,35%);gap:16px;align-items:start}.approval-detail{display:grid;gap:12px}.fee-review-card{border:1px solid var(--line);border-radius:8px;background:#fff;padding:14px;display:grid;gap:10px}.fee-review-head{display:flex;justify-content:space-between;gap:10px;align-items:center}.fee-review-head h4{margin:0;color:#16324a}.fee-badge{display:inline-flex;border-radius:999px;padding:3px 9px;font-size:12px;font-weight:900;background:#eef8f7;color:var(--teal);white-space:nowrap}.fee-badge.locked{background:#f1f3f5;color:#59636e}.fee-review-row{display:grid;grid-template-columns:minmax(0,1fr) max-content;gap:16px;align-items:start;border-top:1px solid var(--line);padding-top:10px}.fee-review-title{font-weight:900;color:#22384d}.fee-review-title small{display:block;color:var(--muted);font-weight:600;font-size:12px;line-height:1.45;margin-top:3px}.fee-review-amount{font-weight:900;white-space:nowrap;text-align:right}.fee-review-total{display:grid;grid-template-columns:1fr max-content;gap:16px;background:#eef8f7;color:var(--teal);border-radius:8px;padding:10px 12px;font-weight:900}.approval-summary{position:sticky;top:86px;border:1px solid #c9e7e4;border-radius:8px;background:#fff;padding:16px;display:grid;gap:12px;box-shadow:0 12px 30px #20304012}.approval-summary h4{margin:0;color:#16324a}.approval-row{display:grid;grid-template-columns:1fr max-content;gap:12px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:8px}.approval-row span{color:var(--muted)}.approval-row b{text-align:right;white-space:nowrap}.approval-final{background:#e9f8f7;border:1px solid #b8dfdc;border-radius:8px;padding:14px;display:grid;gap:4px}.approval-final span{color:#35635f;font-weight:800}.approval-final strong{font-size:28px;color:var(--teal);text-align:right}.approval-equation{font-size:13px;color:var(--muted);text-align:center}.approval-warning{border:1px solid #f0d49b;background:#fff8e8;color:#7b520e;border-radius:8px;padding:10px;font-weight:700}.approval-warning.danger{border-color:#e6b6b6;background:#fff1f1;color:#9c1f1f}.approval-summary input[data-approved-amount]{font-size:20px;font-weight:900;color:var(--teal);text-align:right}.approval-actions{display:grid;gap:8px}.approval-actions .primary,.approval-actions .ghost{width:100%;justify-content:center}.approval-note{font-size:13px;color:var(--muted);line-height:1.5}
 .director-mode .side,.director-mode .top{display:none}.director-mode .shell{grid-template-columns:1fr}.director-mode .main{max-width:980px;margin:0 auto;width:100%;padding:30px 18px}.director-view.active{display:block}.director-panel{display:grid;gap:16px}.director-review-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.director-review-grid .summary-card:nth-child(n+3){grid-column:1/-1}.director-fee-block{border-top:1px solid var(--line);padding-top:10px;display:grid;gap:8px}.director-fee-block h5{margin:0;color:#16324a;font-size:14px}.director-fee-row{display:grid;grid-template-columns:minmax(0,1fr) max-content;gap:16px;align-items:center;padding:5px 0}.director-fee-row b,.director-fee-row strong{text-align:right;white-space:nowrap}.director-fee-row.total{border-top:1px solid var(--line);padding-top:9px;font-weight:900}.director-fee-row.adjustment{color:#354656}.director-amount{border:1px solid #b8dfdc;background:#e9f8f7;border-radius:8px;padding:18px;display:grid;gap:6px}.director-amount span{font-weight:900;color:#35635f}.director-amount strong{font-size:34px;color:var(--teal);text-align:right}.director-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.director-return-box{border:1px solid var(--line);border-radius:8px;background:#fbfdfe;padding:14px;margin-top:12px}
 @media(max-width:900px){.shell{grid-template-columns:1fr}.cards,.grid,.checks,.info-grid,.review-center,.detail-grid,.case-facts,.process,.case-toolbar,.case-search-row,.confirm-summary,.approval-layout,.venue-card,.location-card,.director-review-grid{grid-template-columns:1fr}.flow-grid{grid-template-columns:1fr}.flow-arrow{transform:rotate(0deg)}.confirm-summary .summary-card:nth-child(n+3),.director-review-grid .summary-card:nth-child(n+3){grid-column:auto}.approval-summary{position:static}.item{grid-template-columns:1fr}.top,.head,.case-summary-head{align-items:flex-start;flex-direction:column}.hero:after{display:none}.review-center{grid-template-columns:1fr}.case-search-row{justify-content:stretch}.filterbar{grid-template-columns:repeat(auto-fit,minmax(110px,1fr))}.fee-line{grid-template-columns:1fr auto;gap:4px 10px}.fee-head{display:none}.fee-item-name{grid-column:1;grid-row:1}.fee-amount{grid-column:2;grid-row:1}.fee-unit{grid-column:1;grid-row:2;text-align:left;color:var(--muted)}.fee-qty{grid-column:2;grid-row:2;text-align:right;color:var(--muted)}.fee-line.total span{grid-column:1}.fee-line.total b{grid-column:2}.process-flow{min-width:760px}.process{overflow-x:auto}}
+
+/* 2026-10-19 overview and persistent submission outcomes */
+.overview-list button,.submission-outcome [data-copy-outcome],#backToOverview{border:1px solid var(--line,#dce4e8);background:white;padding:10px 14px;border-radius:8px;cursor:pointer}#dashboard .case-toolbar{margin-top:20px}
+.review-center{display:block}.overview-list{overflow-x:auto;margin-top:16px}.overview-table{width:100%;border-collapse:collapse;text-align:left}.overview-table th,.overview-table td{padding:14px 12px;border-bottom:1px solid var(--line,#dce4e8);vertical-align:top}.overview-table th{white-space:nowrap}.overview-table td:nth-child(2){max-width:340px;overflow-wrap:anywhere}.case-summary{position:static}.case-facts{grid-template-columns:repeat(2,minmax(0,1fr))}.submission-outcome{position:fixed;inset:0;background:#10233199;z-index:100000;display:flex;align-items:center;justify-content:center;padding:16px}.submission-outcome-box{background:white;color:#172b38;border-radius:16px;padding:28px;width:680px;max-width:100%;max-height:90dvh;overflow:auto;font-size:18px;line-height:1.7;box-shadow:0 12px 40px #0004}.submission-outcome h2{font-size:25px;line-height:1.4}.submission-outcome pre{white-space:pre-wrap;font:inherit;background:#f3f6f8;padding:12px;font-size:15px}.outcome-body{white-space:pre-line}.submission-outcome button{min-height:48px;font-size:17px}.submission-outcome [data-copy-status]:empty{display:none}@media(max-width:640px){.submission-outcome-box{padding:20px;font-size:18px}.submission-outcome .actions{display:flex;flex-direction:column}.overview-table{min-width:620px}.case-facts{grid-template-columns:1fr}}
 </style>
 <style>
 .settings-picker{border:1px solid var(--line);border-radius:8px;background:#fbfdfe;padding:14px;margin-bottom:16px;display:grid;grid-template-columns:minmax(260px,420px) 1fr;gap:12px;align-items:end}
@@ -58,7 +62,7 @@ table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;bor
   <nav class="nav hide" id="adminNav">
     <h3>後台</h3>
     <button type="button" data-view="dashboard">案件總覽</button>
-    <button type="button" data-view="allCases">所有申請</button>
+    <button type="button" data-view="allCases">案件明細</button>
     <button type="button" data-view="bookingCalendar">行事曆</button>
     <button type="button" data-view="export">匯出資料</button>
     <button type="button" data-view="settings">系統設定</button>
@@ -255,7 +259,15 @@ table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;bor
       <div class="card"><span>核准後案件</span><strong id="mApproved">0</strong></div>
       <div class="card"><span>核定金額</span><strong id="mMoney">NT$ 0</strong></div>
     </div>
-  </section>
+    <div class="case-toolbar">
+      <div class="filterbar" id="caseFilterBar"></div>
+      <div class="case-search-row">
+        <label for="caseSearchInput">搜尋案件</label>
+        <input type="search" id="caseSearchInput" placeholder="搜尋案件編號、申請人或單位">
+      </div>
+    </div>
+  <div id="caseListPanel" class="overview-list"></div>
+</section>
 </section>
 
 <section id="pending" class="view admin-view">
@@ -264,21 +276,11 @@ table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;bor
 
 <section id="allCases" class="view admin-view">
   <section class="panel">
-    <div class="head"><h2>所有申請</h2><span class="muted">快速篩選案件，點選後在右側查看與審核</span></div>
-    <div class="case-toolbar">
-      <div class="filterbar" id="caseFilterBar"></div>
-      <div class="case-search-row">
-        <label for="caseSearchInput">搜尋案件</label>
-        <input type="search" id="caseSearchInput" placeholder="搜尋案件編號、申請人或單位">
-      </div>
-    </div>
+    <div class="head"><h2>案件明細</h2><button type="button" id="backToOverview">← 返回案件總覽</button></div>
     <div class="review-center">
-      <aside>
-        <h3>案件清單</h3>
-        <div id="caseListPanel" class="case-list"></div>
-      </aside>
+      
       <section id="caseDetailPanel" class="detail-panel">
-        <p class="muted">請先從左側選擇案件。</p>
+        <p class="muted">請至案件總覽選擇案件。</p>
       </section>
     </div>
   </section>
@@ -842,9 +844,9 @@ function animalCountText(x){if(!needsAnimal(x))return"—";let n=animalCountValu
 function directorAnimalSummaryText(value){let s=String(value||"").trim();if(!s)return"";return s.replace(/(數量[:：]\s*)(.*?)(\s*[;；]\s*重量[:：])/,(all,prefix,count,tail)=>{let n=animalCountValue(count);return n>0?`${prefix}${n}${tail}`:all})}
 function animalWeightText(x){return needsAnimal(x)?(x.animalWeight||"—"):"—"}
 async function api(action,payload={}){
- let status=0,text="";
+ let status=0,text="";const controller=action==="submitApplication"?new AbortController():null;const requestTimer=controller?setTimeout(()=>controller.abort(),90000):null;
  try{
-  let res=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,...payload})});
+  let res=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,...payload}),signal:controller?.signal});
   status=res.status;text=await res.text();
   let json;
   try{json=JSON.parse(text);}catch(_){
@@ -862,7 +864,7 @@ async function api(action,payload={}){
   console.error("API request failed",{action,httpStatus:status});
   if(err instanceof SyntaxError)throw new Error("API 回傳格式不是 JSON，請確認 Apps Script 部署權限。");
   throw err;
- }
+ }finally{if(requestTimer)clearTimeout(requestTimer);}
 }
 async function ensureRequestedDatesAvailable(startDate,endDate){
  if(!startDate||!endDate)return{ok:false,message:"請先選擇開始日期與結束日期。"};
@@ -887,7 +889,7 @@ function renderConflictNotice(x){let el=$("#bookingConflictNotice");if(!el)retur
 function hasRoomBlockConflict(x){return !!getBookingConflict(x)}
 async function submitApplication(e){
  e.preventDefault();
- let btn=e.submitter;
+ let btn=e.submitter;let submissionStage="validation",createdCaseNo="",attachmentWarning="";
  await runBusyAction("frontSubmitApplication",btn,"送出中…",async({setMessage})=>{
   try{
    setMessage("正在檢查申請資料與場地時段……");
@@ -902,10 +904,12 @@ async function submitApplication(e){
   if(!available.ok)throw new Error(available.message);
   if(hasRoomBlockConflict(x))throw new Error("此時段已有申請、校內活動或場地不外借，請改選其他日期、時間或場地。");
   setMessage("正在送出申請，請勿關閉視窗……");
+  submissionStage="sending";
   let res=await api("submitApplication",{application:x});
-  if(!res.ok)throw new Error(res.error||"申請送出失敗");
+  if(!res.ok){const error=new Error(res.error||"申請送出失敗");error.code=res.code;throw error;}
+  createdCaseNo=res.caseNo;
   setMessage("申請已建立，正在上傳附件……");
-  try{await uploadInitialApplicationAttachments(res.caseNo,x.email)}catch(uploadErr){toast(uploadErr.message||"附件上傳失敗，請稍後以案件編號查詢後補上傳。")}
+  try{await uploadInitialApplicationAttachments(res.caseNo,x.email)}catch(uploadErr){attachmentWarning="部分附件上傳未完成。";}
   e.target.reset();
   applyStep=1;
   showApplyStep();
@@ -914,9 +918,9 @@ async function submitApplication(e){
   $("#queryResult").classList.remove("hide");
   $("#queryResult").innerHTML=`<h3>✅ 申請已送出</h3><p>案件編號：<strong>${esc(res.caseNo)}</strong></p><p class="muted">請保存案件編號，後續可搭配 Email 查詢申請進度。</p><p class="muted">預計 3–5 個工作天內完成審核。</p>`;
   await renderAvailability();
-  toast(res.emailWarning||"申請已送出");
+  if(attachmentWarning||res.emailWarning)showSubmissionDialog("申請已建立，請確認後續事項",attachmentWarning+"請保存案件編號，至申請進度查詢確認附件；通知信如未收到可聯絡承辦人。請勿重複申請。","APPLICATION_CREATED",createdCaseNo);else toast("申請已送出");
  }catch(err){
-  toast(err.message);
+  submissionProblem(err,submissionStage,createdCaseNo);
  }
  }, {message:"送出申請中，請稍候……",lockCase:false});
 }
@@ -1122,7 +1126,7 @@ function matchesCaseFilter(x){return matchesStatusFilter(x,currentCaseFilter)&&m
 function filteredCases(){return data.filter(matchesCaseFilter)}
 function caseFilterCount(label){return data.filter(x=>matchesStatusFilter(x,label)).length}
 function renderCaseFilters(){let bar=$("#caseFilterBar");if(!bar)return;bar.innerHTML=caseFilterOptions.map(label=>`<button type="button" class="ghost ${label===currentCaseFilter?"active":""}" data-case-filter="${esc(label)}" ${adminActionLocked?"disabled":""}><span>${esc(label)}</span><small>${caseFilterCount(label)}</small></button>`).join("");let search=$("#caseSearchInput");if(search){if(search.value!==caseSearchTerm)search.value=caseSearchTerm;search.disabled=adminActionLocked}}
-function renderReviewCenter(){let list=$("#caseListPanel"),detail=$("#caseDetailPanel");if(!list||!detail)return;renderCaseFilters();let cases=filteredCases();if(!data.length){list.innerHTML="<p class='muted'>目前沒有案件。</p>";detail.innerHTML="<p class='muted'>目前沒有可審核案件。</p>";bindReviewCenter();return}let selected=data.find(x=>x.caseNo===activeCaseNo)||data.find(x=>x.caseNo===selectedCaseNo);if(!selected&&!adminActionLocked)selected=cases[0]||data[0];if(selected)setActiveCaseNo(selected.caseNo);if(!cases.length){list.innerHTML="<p class='muted'>沒有符合篩選或搜尋條件的案件。</p>";detail.innerHTML=selected?caseDetailHtml(selected):"<p class='muted'>請切換篩選條件或調整搜尋文字。</p>";bindReviewCenter();return}list.innerHTML=cases.map(caseListItem).join("");detail.innerHTML=selected?caseDetailHtml(selected):"<p class='muted'>請選擇案件。</p>";bindReviewCenter()}
+function renderReviewCenter(){if($('#dashboard')?.classList.contains('active')){renderCaseOverview();return;}let detail=$('#caseDetailPanel');if(!detail)return;const selected=data.find(x=>x.caseNo===activeCaseNo)||data.find(x=>x.caseNo===selectedCaseNo);detail.innerHTML=selected?caseDetailHtml(selected):'<p class="muted">請至案件總覽選擇案件。</p>';bindReviewCenter();}
 function caseListItem(x){let status=normalizeStatus(x.status);return`<button type="button" class="case-card ${x.caseNo===activeCaseNo?"active":""}" data-select-case="${esc(x.caseNo)}" ${adminActionLocked?"disabled":""}><span class="case-card-head"><strong>${esc(x.caseNo||"")}</strong><span class="badge ${status}">${statusBadgeText(status)}</span></span><span class="case-meta">${esc(x.startDate||"-")}${x.endDate&&x.endDate!==x.startDate?` 至 ${esc(x.endDate)}`:""}　${esc(usageTimeRange(x))}</span></button>`}
 function caseRevisionHtml(x){let status=normalizeStatus(x.status),locked=["已繳費","活動完成","已結案","已退件","申請者取消"].includes(status),need=needsAnimal(x);return`<section class="detail-section wide"><h3>案件變更／重新核定</h3><p class="muted">主任核准後若申請者臨時調整借用時間、人數或動物資料，可由承辦人在此修正；系統會重新試算核定金額，既有收款通知書與申請表需重新產生。</p>${locked?`<div class="notice">此案件目前狀態為「${esc(statusDisplayText(status))}」，不可直接變更申請內容。</div>`:""}<div class="settings-grid"><label>使用開始日期<input type="date" data-revision-start-date="${esc(x.caseNo)}" value="${esc(x.startDate||"")}" ${locked?"disabled":""}></label><label>使用結束日期<input type="date" data-revision-end-date="${esc(x.caseNo)}" value="${esc(x.endDate||x.startDate||"")}" ${locked?"disabled":""}></label><label>開始時間（含工作人員進場）<select data-revision-start-time="${esc(x.caseNo)}" data-time-select data-selected="${esc(formatTime(x.startTime)||usageStartText(x)||"08:00")}" ${locked?"disabled":""}></select></label><label>結束時間（含工作人員離場）<select data-revision-end-time="${esc(x.caseNo)}" data-time-select data-selected="${esc(formatTime(x.endTime)||usageEndText(x)||"17:00")}" ${locked?"disabled":""}></select></label><label>預估人數<input type="number" min="1" data-revision-people="${esc(x.caseNo)}" value="${esc(x.people||0)}" ${locked?"disabled":""}></label><label>動物需求<select data-revision-animal-need="${esc(x.caseNo)}" ${locked?"disabled":""}><option value="不需要" ${need?"":"selected"}>不需要</option><option value="需要" ${need?"selected":""}>需要</option></select></label><label>動物種類<input data-revision-animal-type="${esc(x.caseNo)}" value="${esc(x.animalType||"")}" ${locked?"disabled":""}></label><label>動物隻數<input type="number" min="0" data-revision-animal-count="${esc(x.caseNo)}" value="${esc(animalCountValue(x.animalCount)||0)}" ${locked?"disabled":""}></label><label>動物重量<input data-revision-animal-weight="${esc(x.caseNo)}" value="${esc(x.animalWeight||"")}" ${locked?"disabled":""}></label><label class="wide">備註<textarea rows="3" data-revision-note="${esc(x.caseNo)}" ${locked?"disabled":""}>${esc(x.note||"")}</textarea></label></div><div class="admin-actions"><button class="primary" type="button" data-save-revision="${esc(x.caseNo)}" ${locked?"disabled":""}>儲存案件變更並重新核定</button></div></section>`}
 function caseDetailHtml(x){let status=normalizeStatus(x.status),rooms=normalizeRooms(x.rooms),c=calc(x),billing=billingBreakdown(x,c),systemAmount=billing.systemAmount,approvedAmount=billing.approvedAmount,amountDiff=systemAmount!==approvedAmount;return`
@@ -1131,16 +1135,7 @@ function caseDetailHtml(x){let status=normalizeStatus(x.status),rooms=normalizeR
     <div><h2>${esc(x.caseNo||"")}</h2><span class="badge ${status}">${statusBadgeText(status)}</span></div>
     <div class="admin-actions"><button type="button" class="ghost" data-copy-case="${esc(x.caseNo||"")}">複製案件編號</button>${workflowButtonsHtml(x,{excludeDirector:true})}</div>
   </div>
-  <div class="case-facts">
-    <div class="case-fact"><span>申請人</span><b>${esc(x.applicant||"-")}</b></div>
-    <div class="case-fact"><span>申請單位</span><b>${esc(x.unit||"-")}</b></div>
-    <div class="case-fact"><span>開始日期</span><b>${esc(x.startDate||"-")}</b></div>
-    <div class="case-fact"><span>結束日期</span><b>${esc(x.endDate||x.startDate||"-")}</b></div>
-    <div class="case-fact"><span>開始時間（含工作人員進場）</span><b>${esc(usageStartText(x))}</b></div>
-    <div class="case-fact"><span>結束時間（含工作人員離場）</span><b>${esc(usageEndText(x))}</b></div>
-    <div class="case-fact"><span>使用場地</span><b>${esc(rooms.join("、")||"未填")}</b></div>
-    <div class="case-fact"><span>目前狀態</span><b>${statusBadgeText(status)}</b></div>
-  </div>
+  <div class="case-facts"><div><span>申請單位</span><strong>${esc(x.unit||"—")}</strong></div><div><span>活動日期</span><strong>${esc(x.startDate||"—")} ～ ${esc(x.endDate||x.startDate||"—")}</strong></div></div>
 </div>
 <div class="process">${processHtml(status)}</div>
 ${x.directorReturnReason?`<div class="notice"><b>主任退回原因：</b><br>${esc(x.directorReturnReason)}</div>`:""}
@@ -1154,7 +1149,7 @@ ${x.directorReturnReason?`<div class="notice"><b>主任退回原因：</b><br>${
   ${supplementNoticeHtml(x)}
   ${caseRevisionHtml(x)}
   <section class="detail-section wide"><h3>費用明細／核定金額</h3>${teachingBenefitCaseHtml(x)}${feeApprovalLayout(x,c,billing)}</section>
-  ${paymentInfoHtml(x,true)}${wastePanelHtml(x,true)}
+  ${paymentInfoHtml(x,true)}${wastePanelHtml(x,true)}${closurePanelHtml(x)}
   ${caseDocumentsHtml(x,{adminView:true})}
   ${cancelInfoHtml(x)}
   <section class="detail-section"><h3>備註與附件</h3>${kv("備註",x.note||"無")}${kv("附件狀態",x.attachments||"未填")}</section>
@@ -1238,12 +1233,12 @@ async function generatePaymentNotice(caseNo,btn){await runBusyAction(`generatePa
 async function generateApprovedApplicationForm(caseNo,btn){await runBusyAction(`generateApprovedApplicationForm:${caseNo}`,btn,"產生中…",async({setMessage})=>{try{setMessage("建立核定費用版申請表...");let res=await api("generateApprovedApplicationForm",{adminToken,caseNo,actor:"承辦人"});if(!res.ok)throw new Error(res.error||"申請表建立失敗");if(res.case){data=data.map(x=>x.caseNo===caseNo?normalizeCases([res.case])[0]:x)}else await refreshAdmin();renderReviewCenter();toast("申請表（核定費用版）已建立")}catch(err){toast(err.message)}}, {message:"建立申請表（核定費用版）..."})}
 async function sendPaymentNoticeEmail(caseNo,btn){await runBusyAction('sendPaymentNoticeEmail:'+caseNo,btn,'處理中…',async()=>{try{const token=adminToken;const p=await api('sendPaymentNoticeEmail',{adminToken:token,caseNo,previewOnly:true});if(!p.ok)throw Error(p.error||'通知預覽失敗');if(token!==adminToken||!admin)return;const d=p.preview;if(!confirm('收件人：'+d.recipient+'\n主旨：'+d.subject+'\n\n'+d.body+'\n\n確認內容正確並寄出（附收款通知書 PDF）？'))return;const res=await api('sendPaymentNoticeEmail',{adminToken:token,caseNo,preview:d});if(!res.ok)throw Error(res.error||'寄送失敗');if(token!==adminToken||!admin)return;if(res.case)data=data.map(x=>x.caseNo===caseNo?normalizeCases([res.case])[0]:x);else await refreshAdmin();renderReviewCenter();toast(res.message||'寄送完成')}catch(err){toast(err.message)}},{message:'準備通知內容，請稍候……'})}
 function billingBreakdown(x,c=calc(x)){let method=normalizeDiscount(x.discount),custom=method==="自訂核定金額",preserveStored=["已繳費","活動完成","已結案"].includes(normalizeStatus(x.status)),systemAmount=toSafeMoney(c.total,0),roomOriginal=toSafeMoney(c.base,0),otherAmount=toSafeMoney(c.extra,0),manualAdjustmentTotal=activeFeeAdjustmentTotal(x.feeAdjustments),rate=discountMap[method],storedOriginal=hasMoneyValue(x.originalApprovedAmount)?toSafeMoney(x.originalApprovedAmount,null):null,storedFinal=hasMoneyValue(x.finalApprovedAmount)?toSafeMoney(x.finalApprovedAmount,null):null,roomDiscounted=custom?Math.max(0,(storedOriginal??(hasMoneyValue(x.amount)?toSafeMoney(x.amount,systemAmount):systemAmount))-otherAmount):Math.round(roomOriginal*(rate??1)),autoApproved=roomDiscounted+otherAmount,originalApprovedAmount=custom?(storedOriginal??(hasMoneyValue(x.amount)?toSafeMoney(x.amount,systemAmount):systemAmount)):(preserveStored&&storedOriginal!==null?storedOriginal:autoApproved),finalApprovedAmount=preserveStored&&storedFinal!==null?storedFinal:(originalApprovedAmount+manualAdjustmentTotal);let abnormal=originalApprovedAmount<0||finalApprovedAmount<0||manualAdjustmentTotal<-10000000||manualAdjustmentTotal>10000000;if(abnormal)console.error("[billingBreakdown] abnormal money values",{caseNo:x.caseNo,systemAmount,roomOriginal,otherAmount,manualAdjustmentTotal,storedOriginal,storedFinal,originalApprovedAmount,finalApprovedAmount,raw:x});return{method,systemAmount,roomOriginal,roomDiscounted,otherAmount,approvedAmount:finalApprovedAmount,originalApprovedAmount,manualAdjustmentTotal,finalApprovedAmount,abnormal}}
-function workflowButtonsHtml(x,options={}){let status=normalizeStatus(x.status),next=[...(workflowTransitions[status]||[])].filter(s=>s!=="已繳費");if(options.excludeDirector)next=next.filter(s=>s!=="待主任核定");if(!next.length)return"";return next.map(s=>`<button type="button" class="${s==='已退件'?'ghost danger':'primary'}" data-workflow="${esc(x.caseNo)}" data-next-status="${esc(s)}">${workflowLabels[s]||esc(s)}</button>`).join("")}
-function processHtml(status){let s=normalizeStatus(status);if(s==="已退件")return`<div class="process-special danger">本案件已退件。</div>`;if(s==="待取消審核")return`<div class="process-special">申請者已提出取消借用，等待承辦審核。</div>`;if(s==="申請者取消")return`<div class="process-special danger">本案件已取消。</div>`;let steps=[["已送件","待承辦審核"],["承辦審核中","承辦審核中"],["待主任核定","待主任核准"],["承辦修正中","承辦修正中"],["待繳費","待繳費"],["已繳費","已繳費"],["活動完成","活動完成"],["已結案","已結案"]],idx={"已送件":0,"承辦審核中":1,"待補件":1,"補件完成":1,"待主任核定":2,"承辦修正中":3,"主任核准":4,"待繳費":4,"已繳費":5,"活動完成":6,"已結案":7}[s]??0;return`<div class="process-flow">${steps.map((step,i)=>`<div class="process-node ${i<idx?"done":i===idx?"active":""}"><i></i>${esc(step[1])}</div>`).join("")}</div>`}
+function workflowButtonsHtml(x,options={}){let status=normalizeStatus(x.status),next=[...(workflowTransitions[status]||[])].filter(s=>!["已繳費","活動完成","已結案"].includes(s));if(options.excludeDirector)next=next.filter(s=>s!=="待主任核定");if(!next.length)return"";return next.map(s=>`<button type="button" class="${s==='已退件'?'ghost danger':'primary'}" data-workflow="${esc(x.caseNo)}" data-next-status="${esc(s)}">${workflowLabels[s]||esc(s)}</button>`).join("")}
+function processHtml(status){let s=normalizeStatus(status);if(s==="已退件")return`<div class="process-special danger">本案件已退件。</div>`;if(s==="待取消審核")return`<div class="process-special">申請者已提出取消借用，等待承辦審核。</div>`;if(s==="申請者取消")return`<div class="process-special danger">本案件已取消。</div>`;let steps=[["已送件","待承辦審核"],["承辦審核中","承辦審核中"],["待主任核定","待主任核准"],["承辦修正中","承辦修正中"],["待繳費","待繳費"],["已繳費","已繳費"],["活動完成","活動完成"],["已結案","已結案"]],idx={"已送件":0,"承辦審核中":1,"待補件":1,"補件完成":1,"待主任核定":2,"承辦修正中":3,"主任核准":4,"待繳費":4,"已繳費":5,"活動完成":6,"已結案":7}[s]??0;if(s!=="活動完成"){steps=steps.filter(step=>step[0]!=="活動完成");if(idx>6)idx--;}return`<div class="process-flow" style="grid-template-columns:repeat(${steps.length},minmax(0,1fr))">${steps.map((step,i)=>`<div class="process-node ${i<idx?"done":i===idx?"active":""}"><i></i>${esc(step[1])}</div>`).join("")}</div>`}
 function timelineDisplayStatus(status){return statusDisplayText(status)}
 function timelineHtml(x){let events=[...(Array.isArray(x.timeline)?x.timeline:[]),...(paymentRecord(x).timeline||[])];if(!events.length&&normalizeStatus(x.status)==="待主任核定")events=[{date:"-",time:"",status:"完成承辦審核",actor:"承辦人"},{date:"-",time:"",status:"送主任核定",actor:"承辦人"}];if(!events.length)events=[{date:"-",time:"",status:normalizeStatus(x.status),actor:"系統"}];return events.map(e=>`<div class="stage active"><span><b>${esc(timelineDisplayStatus(e.status||""))}</b><br><span class="muted">${esc(e.date||"")} ${esc(e.time||"")}｜${esc(e.actor||"")}</span></span></div>`).join("")}
 function actionLogsHtml(x){let logs=Array.isArray(x.actionLogs)?x.actionLogs:[];return logs.length?logs.map(e=>`<div class="stage active"><span><b>${esc(e.action||"")}</b><br><span class="muted">${esc(e.date||"")} ${esc(e.time||"")}｜${esc(e.actor||"")}</span></span></div>`).join(""):"<p class='muted'>尚無操作紀錄。</p>"}
-function bindReviewCenter(){initTimeSelects();$$("[data-case-filter]").forEach(el=>el.onclick=()=>{if(adminActionLocked){toast("案件處理中，請等待完成後再切換案件。");return}currentCaseFilter=el.dataset.caseFilter;renderReviewCenter()});let search=$("#caseSearchInput");if(search)search.oninput=()=>{if(adminActionLocked)return;caseSearchTerm=search.value;renderReviewCenter()};$$("[data-select-case]").forEach(el=>el.onclick=()=>{if(adminActionLocked){toast("案件處理中，請等待完成後再切換案件。");return}setActiveCaseNo(el.dataset.selectCase);renderReviewCenter()});$$("[data-copy-case]").forEach(el=>el.onclick=()=>copyCaseNo(el.dataset.copyCase));$$("[data-workflow]").forEach(el=>el.onclick=()=>updateWorkflow(null,el.dataset.nextStatus,el));$$("[data-billing-method]").forEach(el=>el.onchange=()=>applyBillingMethod(activeCaseNo,el.value));$$("[data-approved-amount]").forEach(el=>el.oninput=()=>markApprovalDirty(activeCaseNo));$$("[data-save-billing]").forEach(el=>el.onclick=()=>saveBillingAmount(null,el));$$("[data-send-director]").forEach(el=>el.onclick=()=>sendDirectorAfterSave(null,el));$$("[data-resend-director]").forEach(el=>el.onclick=()=>resendDirectorReviewNotification(el.dataset.resendDirector||activeCaseNo,el));$$("[data-save-revision]").forEach(el=>el.onclick=()=>saveCaseRevision(el.dataset.saveRevision||activeCaseNo,el));$$("[data-toggle-fee-adjustment]").forEach(el=>el.onclick=()=>{adjustingFeeCaseNo=adjustingFeeCaseNo===activeCaseNo?"":activeCaseNo;renderReviewCenter()});$$("[data-cancel-fee-adjustment]").forEach(el=>el.onclick=()=>{adjustingFeeCaseNo="";renderReviewCenter()});$$("[data-add-fee-adjustment]").forEach(el=>el.onclick=()=>addFeeAdjustment(activeCaseNo,el));$$("[data-void-fee-adjustment]").forEach(el=>el.onclick=()=>voidFeeAdjustment(activeCaseNo,el.dataset.adjustmentId,el));$$("[data-handler-opinion]").forEach(el=>el.onchange=()=>upd(activeCaseNo,{handlerOpinion:el.value,actor:"後台管理者"}));$$("[data-director-opinion]").forEach(el=>el.onchange=()=>upd(activeCaseNo,{directorOpinion:el.value,actor:"後台管理者"}));$$("[data-return-reason]").forEach(el=>el.onchange=()=>upd(activeCaseNo,{returnReason:el.value,actor:"後台管理者"}));bindAiReviewControls();bindTeachingBenefitCaseControls();bindSupplementControls();bindPaymentControls()}
+function bindReviewCenter(){const back=$("#backToOverview");if(back)back.onclick=async()=>{if(adminActionLocked)return;await show("dashboard");window.scrollTo(0,overviewScrollY);};$$("[data-close-case]").forEach(b=>b.onclick=()=>confirmCaseClosure(b));initTimeSelects();$$("[data-case-filter]").forEach(el=>el.onclick=()=>{if(adminActionLocked){toast("案件處理中，請等待完成後再切換案件。");return}currentCaseFilter=el.dataset.caseFilter;renderReviewCenter()});let search=$("#caseSearchInput");if(search)search.oninput=()=>{if(adminActionLocked)return;caseSearchTerm=search.value;renderReviewCenter()};$$("[data-select-case]").forEach(el=>el.onclick=()=>{if(adminActionLocked){toast("案件處理中，請等待完成後再切換案件。");return}overviewScrollY=window.scrollY;setActiveCaseNo(el.dataset.selectCase);show("allCases");window.scrollTo(0,0)});$$("[data-copy-case]").forEach(el=>el.onclick=()=>copyCaseNo(el.dataset.copyCase));$$("[data-workflow]").forEach(el=>el.onclick=()=>updateWorkflow(null,el.dataset.nextStatus,el));$$("[data-billing-method]").forEach(el=>el.onchange=()=>applyBillingMethod(activeCaseNo,el.value));$$("[data-approved-amount]").forEach(el=>el.oninput=()=>markApprovalDirty(activeCaseNo));$$("[data-save-billing]").forEach(el=>el.onclick=()=>saveBillingAmount(null,el));$$("[data-send-director]").forEach(el=>el.onclick=()=>sendDirectorAfterSave(null,el));$$("[data-resend-director]").forEach(el=>el.onclick=()=>resendDirectorReviewNotification(el.dataset.resendDirector||activeCaseNo,el));$$("[data-save-revision]").forEach(el=>el.onclick=()=>saveCaseRevision(el.dataset.saveRevision||activeCaseNo,el));$$("[data-toggle-fee-adjustment]").forEach(el=>el.onclick=()=>{adjustingFeeCaseNo=adjustingFeeCaseNo===activeCaseNo?"":activeCaseNo;renderReviewCenter()});$$("[data-cancel-fee-adjustment]").forEach(el=>el.onclick=()=>{adjustingFeeCaseNo="";renderReviewCenter()});$$("[data-add-fee-adjustment]").forEach(el=>el.onclick=()=>addFeeAdjustment(activeCaseNo,el));$$("[data-void-fee-adjustment]").forEach(el=>el.onclick=()=>voidFeeAdjustment(activeCaseNo,el.dataset.adjustmentId,el));$$("[data-handler-opinion]").forEach(el=>el.onchange=()=>upd(activeCaseNo,{handlerOpinion:el.value,actor:"後台管理者"}));$$("[data-director-opinion]").forEach(el=>el.onchange=()=>upd(activeCaseNo,{directorOpinion:el.value,actor:"後台管理者"}));$$("[data-return-reason]").forEach(el=>el.onchange=()=>upd(activeCaseNo,{returnReason:el.value,actor:"後台管理者"}));bindAiReviewControls();bindTeachingBenefitCaseControls();bindSupplementControls();bindPaymentControls()}
 function bindPaymentControls(){$$("[data-confirm-payment]").forEach(el=>el.onclick=()=>confirmPaymentChoice(el.dataset.confirmPayment,el.dataset.paymentChange==="true",el));$$("[data-change-payment]").forEach(el=>el.onclick=()=>{changingPaymentCaseNo=el.dataset.changePayment;renderQueryResult(lastQueriedCase)});$$("[data-cancel-payment-change]").forEach(el=>el.onclick=()=>{changingPaymentCaseNo=null;renderQueryResult(lastQueriedCase)});$$("[data-cancel-application]").forEach(el=>el.onclick=()=>openCancelApplicationModal(el.dataset.cancelApplication));$$("[data-review-cancel]").forEach(el=>el.onclick=()=>reviewCancelApplication(el.dataset.reviewCancel,el.dataset.cancelDecision,el));$$("[data-front-attach],[data-admin-attach]").forEach(el=>el.onchange=()=>{let file=el.files?.[0];if(file)saveAttachment(el.dataset.frontAttach||el.dataset.adminAttach,el.dataset.attachType,file)});$$("[data-attachment-status]").forEach(el=>el.onclick=()=>setAttachmentStatus(el.dataset.attachmentStatus,el.dataset.attachType,el.dataset.attachStatus,el));$$("[data-confirm-paid]").forEach(el=>el.onclick=()=>confirmPaid(el.dataset.confirmPaid,el));$$("[data-save-remittance]").forEach(el=>el.onclick=()=>saveRemittanceInfo(el.dataset.saveRemittance,el));$$("[data-generate-payment-notice]").forEach(el=>el.onclick=()=>generatePaymentNotice(el.dataset.generatePaymentNotice,el));$$("[data-generate-approved-application]").forEach(el=>el.onclick=()=>generateApprovedApplicationForm(el.dataset.generateApprovedApplication,el));$$("[data-send-payment-notice]").forEach(el=>el.onclick=()=>sendPaymentNoticeEmail(el.dataset.sendPaymentNotice,el));$$("[data-copy-bank-account]").forEach(el=>el.onclick=()=>copyText(bankAccountNo,"已複製帳號"));$$("[data-copy-bank-info]").forEach(el=>el.onclick=()=>copyText(bankTransferInfoText,"已複製匯款資訊"))}
 async function reviewCancelApplication(caseNo,decision,btn){let rejectReason="";if(decision==="reject"){rejectReason=prompt("請填寫不同意原因")||"";if(!rejectReason.trim()){toast("請填寫不同意原因");return}}await runBusyAction(`reviewCancel:${caseNo}:${decision}`,btn,"處理中…",async()=>{try{let res=await api("reviewCancelApplication",{adminToken,caseNo,decision,rejectReason,actor:"承辦人"});if(!res.ok)throw new Error(res.error||"取消審核失敗");await refreshAdmin();renderReviewCenter();toast(decision==="approve"?"已同意取消借用":"已不同意取消借用")}catch(err){toast(err.message)}}, {message:"處理取消審核中，請稍候……"})}
 function feeAdjustmentNeedsConfirm(x){return["已繳費","活動完成","已結案","已退件","申請者取消"].includes(normalizeStatus(x.status))}
@@ -1775,7 +1770,7 @@ function renderAll(){
  ensureSelectedCase();renderShell();
  if(!admin){renderMetrics();renderPending();renderReviewCenter();renderAdminCalendar();renderBookingCalendar();renderBlockList();return;}
  const id=document.querySelector('.view.active')?.id;
- if(id==='dashboard'){renderMetrics();renderPending();}
+ if(id==='dashboard'){renderMetrics();renderCaseOverview();}
  else if(id==='allCases')renderReviewCenter();
  else if(id==='adminCalendar')renderAdminCalendar();
  else if(id==='bookingCalendar'){renderBookingCalendar();renderBlockList();}
@@ -1811,6 +1806,47 @@ document.addEventListener('change',async e=>{
  if(file.size>5242880||!['application/pdf','image/jpeg','image/png'].includes(file.type)){toast('請選擇 5MB 以下 PDF、JPG 或 PNG');return;}
  await runBusyAction('wasteProof:'+el.dataset.case,el,'上傳中…',async()=>{try{const res=await api('uploadWasteProof',{caseNo:el.dataset.case,email:lastQueryEmail,chargeId:el.dataset.wasteProof,fileName:file.name,mimeType:file.type,fileBase64:await readFileBase64(file)});if(!res.ok)throw new Error(res.error);await reloadQueriedCase(el.dataset.case);toast(res.message)}catch(err){toast(err.message)}},{message:'上傳追加費用繳費證明中……',lockCase:false});
 });
+
+let overviewScrollY=0;
+function renderCaseOverview(){
+ renderCaseFilters();const list=$('#caseListPanel');if(!list)return;
+ const cases=filteredCases();list.innerHTML=cases.length?`<table class="overview-table"><thead><tr><th>案件編號</th><th>申請人／單位</th><th>活動日期</th><th>案件狀態</th><th>操作</th></tr></thead><tbody>${cases.map(x=>`<tr><td>${esc(x.caseNo)}</td><td>${esc(x.applicant||'')}<br><span class="muted">${esc(x.unit||'')}</span></td><td>${esc(x.startDate||'')} ${x.endDate!==x.startDate?'～ '+esc(x.endDate||''):''}<br>${esc(usageTimeRange(x))}</td><td>${statusBadgeText(normalizeStatus(x.status))}${x.closure?.ready?'<br><small>可確認結案</small>':''}</td><td><button type="button" data-select-case="${esc(x.caseNo)}" ${adminActionLocked?'disabled':''}>查看案件</button></td></tr>`).join('')}</tbody></table>`:'<p class="muted">沒有符合條件的案件。</p>';
+ bindReviewCenter();
+}
+function closurePanelHtml(x){
+ const c=x.closure;if(!c)return '<section class="detail-section wide"><p class="muted">結案檢查需搭配本次後端更新。</p></section>';
+ if(c.closed)return '<section class="detail-section wide"><h3>結案管理</h3><p>本案已結案，原收款與追加費用紀錄保留供查閱。</p></section>';
+ if(!['主任核准','待繳費','已繳費','活動完成'].includes(normalizeStatus(x.status)))return '';
+ return `<section class="detail-section wide"><h3>結案管理</h3><p>原費用：${c.originalPaid?'已確認繳清／免收':'尚未確認繳清'}　｜　追加費用：${c.supplementalPaid?'已處理／無追加費用':'尚未全部處理'}</p>${c.ready?'<p>活動已結束，款項檢查通過。請核對下列事項後確認結案。</p>':`<ul>${c.reasons.map(t=>'<li>'+esc(t)+'</li>').join('')}</ul>`}<label><input type="checkbox" id="closeNoMoreCharges"> 確認沒有尚待建立的追加費用</label><label><input type="checkbox" id="closeOnsiteSettled"> 確認現場值班費及其他行政事項已處理</label><button type="button" class="primary" data-close-case="${esc(x.caseNo)}" ${!c.ready?'disabled':''}>確認結案</button><p class="muted">「已繳費」表示原費用已確認；追加費用仍須分別核對。不會自動結案。</p></section>`;
+}
+async function confirmCaseClosure(btn){
+ const caseNo=btn.dataset.closeCase;
+ if(!$('#closeNoMoreCharges')?.checked||!$('#closeOnsiteSettled')?.checked){showSubmissionDialog('尚未完成結案確認','請先勾選確認沒有待追加費用，且現場值班費及其他事項已處理。','CLOSURE_CHECK');return;}
+ if(!confirm('確認將 '+caseNo+' 結案？請確定所有費用及行政事項已處理完畢。'))return;
+ await runBusyAction('close:'+caseNo,btn,'結案中…',async()=>{try{const r=await api('closeCase',{adminToken,caseNo,confirmNoMoreCharges:true,confirmOnsiteSettled:true});if(!r.ok)throw new Error(r.error||'結案失敗');await refreshAdmin();renderAll();toast(r.message);}catch(e){showSubmissionDialog('無法結案',e.message,'CLOSURE_FAILED');}});
+}
+function showSubmissionDialog(title,body,code,caseNo=''){
+ document.getElementById('submissionOutcomeDialog')?.remove();
+ const prior=document.activeElement,dialog=document.createElement('div');dialog.id='submissionOutcomeDialog';dialog.className='submission-outcome';dialog.setAttribute('role','alertdialog');dialog.setAttribute('aria-modal','true');dialog.setAttribute('aria-labelledby','submissionOutcomeTitle');
+ const safeCode=/^[A-Z0-9_]{1,48}$/.test(code)?code:'REQUEST_FAILED';
+ const info=`處理時間：${new Date().toLocaleString('zh-TW',{timeZone:'Asia/Taipei'})}\n訊息代碼：${safeCode}${caseNo?'\n案件編號：'+caseNo:''}`;
+ dialog.innerHTML=`<div class="submission-outcome-box"><h2 id="submissionOutcomeTitle">${esc(title)}</h2><p class="outcome-body">${esc(body)}</p><p>若需要協助，請截圖此畫面回報承辦人，並告知申請 Email 與活動日期。</p><pre>${esc(info)}</pre><div class="actions"><button type="button" data-copy-outcome>複製回報資訊</button><button type="button" class="primary" data-close-outcome>我知道了，關閉</button></div><p role="status" data-copy-status></p></div>`;
+ document.body.appendChild(dialog);
+ const close=()=>{dialog.remove();if(prior?.isConnected)prior.focus();};dialog.querySelector('[data-close-outcome]').onclick=close;
+ dialog.querySelector('[data-copy-outcome]').onclick=async()=>{try{await navigator.clipboard.writeText(title+'\n'+body+'\n'+info);dialog.querySelector('[data-copy-status]').textContent='已複製，可貼給承辦人。';}catch(_){dialog.querySelector('[data-copy-status]').textContent='無法自動複製，請截圖此畫面。';}};
+ dialog.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();close();}if(e.key==='Tab'){const buttons=[...dialog.querySelectorAll('button')],first=buttons[0],last=buttons[buttons.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
+ dialog.querySelector('[data-close-outcome]').focus();
+}
+function submissionProblem(err,stage,caseNo){
+ if(caseNo){showSubmissionDialog('申請已建立，後續處理未完成','案件已建立，請保存案件編號。請至申請進度查詢確認附件與通知狀況；如有缺少附件，請補上傳。請勿重複申請。','APPLICATION_CREATED',caseNo);return;}
+ const msg=String(err?.message||''),code=err?.code||'';
+ if(code==='ENDED_UNPAID_BOOKING'||/此 Email 有活動已結束/.test(msg)){showSubmissionDialog('申請未送出：前次費用尚未確認繳清','您有前次活動費用尚未由承辦人確認繳清，暫時無法提出新申請。若已付款，請提供繳費證明並聯絡承辦人；確認繳清後即可重新申請。填寫內容仍保留。','ENDED_UNPAID_BOOKING');return;}
+ if(/欄數.*範圍|number of columns/i.test(msg)){showSubmissionDialog('系統資料儲存異常','系統寫入資料時，資料欄位數與表格範圍不一致。請截圖回報承辦人，先確認是否建立案件，再重新送出。填寫內容仍保留。','STORAGE_COLUMN_MISMATCH');return;}
+ const rules=[[/不外借|暫停借用|已有申請|衝突|重疊/,'選擇的場地或時段目前無法借用，請改選日期、時間或場地。','VENUE_UNAVAILABLE'],[/試算金額|費率/,'收費設定已更新，請返回費用試算確認最新金額後再送出。','QUOTE_CHANGED'],[/附件|檔案|5MB/,'附件格式或大小不符合要求，請檢查附件（PDF／JPG／PNG、5MB 以下）後再送出。','ATTACHMENT_CHECK'],[/日期|時間|人數|必填|請先選擇|請填寫/,'申請資料有缺漏或格式不正確，請檢查必填欄位、日期、時間及人數後再送出。','APPLICATION_VALIDATION']];
+ const rule=rules.find(r=>r[0].test(msg));if(rule){showSubmissionDialog('申請尚未完成',rule[1]+'填寫內容仍保留。',rule[2]);return;}
+ if(stage==='validation'){showSubmissionDialog('申請尚未送出','請確認必填資料、附件格式及日期／時段；場地也可能已被預約或不開放。若資料皆正確，可能是系統讀取異常，請截圖回報承辦人。填寫內容仍保留。','PRE_SUBMIT_CHECK');return;}
+ showSubmissionDialog('目前無法確認申請是否成功','系統未能完成確認，可能為連線中斷或後端處理異常。請先查詢申請紀錄或聯絡承辦人，確認未建立案件後再送出，避免重複申請。填寫內容仍保留。',code||'SUBMISSION_UNCONFIRMED');
+}
 
 </script>
 </body>
