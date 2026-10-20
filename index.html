@@ -1167,7 +1167,7 @@ ${x.directorReturnReason?`<div class="notice"><b>主任退回原因：</b><br>${
   ${supplementNoticeHtml(x)}
   ${caseRevisionHtml(x)}
   <section class="detail-section wide"><h3>費用明細／核定金額</h3>${teachingBenefitCaseHtml(x)}${feeApprovalLayout(x,c,billing)}</section>
-  ${paymentInfoHtml(x,true)}${wastePanelHtml(x,true)}${closurePanelHtml(x)}
+  ${paymentInfoHtml(x,true)}${wastePanelHtml(x,true)}${closurePanelHtml(x)}${proxyRepairPanelHtml(x)}
   ${caseDocumentsHtml(x,{adminView:true})}
   ${cancelInfoHtml(x)}
   <section class="detail-section"><h3>備註與附件</h3>${kv("備註",x.note||"無")}${kv("附件狀態",x.attachments||"未填")}</section>
@@ -1290,7 +1290,7 @@ function ensureOperationCase(requestedCaseNo,action,btn){let buttonNo=buttonCase
 async function saveBillingAmount(caseNo,btn){caseNo=ensureOperationCase(caseNo,"saveBillingAmount",btn);if(!caseNo)return;let patch=currentBillingPatch(caseNo);if(!patch)return;await runBusyAction(`saveBilling:${caseNo}`,btn,"儲存草稿中…",async()=>{try{let savedCaseNo=caseNo,current=data.find(item=>item.caseNo===savedCaseNo),expectedNormalized=normalizeApprovalData({...patch,feeAdjustments:current?.feeAdjustments||[]}),expectedSignature=JSON.stringify(expectedNormalized),expectedCore=approvalCoreValues({caseNo:savedCaseNo,...patch});let res=await api("updateCase",{adminToken,caseNo:savedCaseNo,...patch});if(!res.ok)throw new Error("草稿儲存失敗："+(res.error||"後端未回傳成功"));if(res.case){data=data.map(item=>item.caseNo===savedCaseNo?normalizeCases([res.case])[0]:item)}setActiveCaseNo(savedCaseNo);await refreshAdmin();setActiveCaseNo(savedCaseNo);let saved=data.find(item=>item.caseNo===savedCaseNo),savedManual=hasApprovalNumberValue(saved?.manualAdjustmentTotal)?saved.manualAdjustmentTotal:activeFeeAdjustmentTotal(saved?.feeAdjustments||parseFeeAdjustmentsForSignature(saved?.feeAdjustmentsJson)),savedNormalized=normalizeApprovalData({feeMethod:saved?.feeMethod||saved?.discount,roomFeeAfterDiscount:saved?.roomFeeAfterDiscount,nonDiscountableSubtotal:saved?.nonDiscountableSubtotal,originalApprovedAmount:saved?.originalApprovedAmount,manualAdjustmentTotal:savedManual,finalApprovedAmount:saved?.finalApprovedAmount,feeAdjustments:saved?.feeAdjustments,feeAdjustmentsJson:saved?.feeAdjustmentsJson}),savedSignature=JSON.stringify(savedNormalized),savedCore=approvalCoreValues(saved);if(!isApprovalCoreSaved(expectedCore,savedCore)||!String(saved?.approvalSavedAt||"").trim()){throw new Error("草稿儲存失敗：寫入後重新讀取值不一致，請檢查 Apps Script Logger。")}if(savedSignature!==expectedSignature)logApprovalDiff(expectedNormalized,savedNormalized);markApprovalSaved(savedCaseNo,savedSignature);renderAll();toast("✓ 草稿已儲存。")}catch(err){markApprovalDirty(caseNo);renderReviewCenter();toast(err.message||"草稿儲存失敗")}}, {message:"儲存草稿中，請稍候……"})}
 async function sendDirectorAfterSave(caseNo,btn){caseNo=ensureOperationCase(caseNo,"sendDirectorAfterSave",btn);if(!caseNo)return;const operationCaseNo=caseNo,patch=currentBillingPatch(operationCaseNo);if(!patch)return;await runBusyAction(`sendDirector:${operationCaseNo}`,btn,"送主任核定中…",async(ctx)=>{try{ctx.setMessage("儲存目前核定內容……");setActiveCaseNo(operationCaseNo);ctx.setMessage("重新讀取並驗證案件……");ctx.setMessage("建立核定連結……");ctx.setMessage("寄送主任通知……");let res=await api("sendDirectorReviewNotification",{adminToken,caseNo:operationCaseNo,...patch,actor:"後台管理者"});if(!res.ok)throw new Error(res.error||"主任通知寄送失敗");await refreshAdmin();setActiveCaseNo(operationCaseNo);renderAll();if(res.skipped)toast(res.message);else if(res.sent)toast("✓ 案件已送主任核定。✓ 主任通知已寄出。");else toast(res.emailWarning||res.errorMessage||"案件已送主任核定，但 Email 寄送失敗，請重新寄送通知。")}catch(err){toast(err.message)}}, {message:"送主任核定中，請稍候……"})}
 async function resendDirectorReviewNotification(caseNo,btn){caseNo=String(caseNo||"").trim();if(!caseNo){toast("找不到要重新寄送的案件編號。");return}await runBusyAction(`resendDirector:${caseNo}`,btn,"寄送中…",async()=>{try{setActiveCaseNo(caseNo);let res=await api("resendDirectorReviewNotification",{adminToken,caseNo,actor:"後台管理者"});if(!res.ok)throw new Error(res.error||"主任核定通知重新寄送失敗");await refreshAdmin();setActiveCaseNo(caseNo);renderAll();toast(res.sent?`已重新寄送主任核定通知，剩餘額度 ${res.remainingQuota??"-"}`:res.emailWarning||res.errorMessage||"Email 寄送失敗，請確認通知設定。")}catch(err){toast(err.message)}}, {message:"重新寄送主任通知中，請稍候……"})}
-async function updateWorkflow(caseNo,nextStatus,btn){caseNo=ensureOperationCase(caseNo,"updateWorkflow",btn);if(!caseNo)return;if(nextStatus==="待主任核定"){await sendDirectorAfterSave(caseNo,btn);return}if(nextStatus==="已繳費"){await confirmPaid(caseNo,btn);return}let statusToSend=nextStatus==="主任核准"?"待繳費":nextStatus,patch={status:statusToSend,actor:"後台管理者"};if(nextStatus==="承辦修正中")patch.timelineNote="主任退回承辦修正";if(nextStatus==="已退件")patch.timelineNote="主任不同意，案件已退件";if(nextStatus==="主任核准")patch.timelineNote="主任核准，進入待繳費";if(nextStatus==="已繳費")patch.timelineNote="承辦確認已繳費";await upd(caseNo,patch,btn)}
+async function updateWorkflow(caseNo,nextStatus,btn){caseNo=ensureOperationCase(caseNo,"updateWorkflow",btn);if(!caseNo)return;if(nextStatus==="主任核准"){await approveByProxy(caseNo,btn);return}if(nextStatus==="待主任核定"){await sendDirectorAfterSave(caseNo,btn);return}if(nextStatus==="已繳費"){await confirmPaid(caseNo,btn);return}let statusToSend=nextStatus==="主任核准"?"待繳費":nextStatus,patch={status:statusToSend,actor:"後台管理者"};if(nextStatus==="承辦修正中")patch.timelineNote="主任退回承辦修正";if(nextStatus==="已退件")patch.timelineNote="主任不同意，案件已退件";if(nextStatus==="主任核准")patch.timelineNote="主任核准，進入待繳費";if(nextStatus==="已繳費")patch.timelineNote="承辦確認已繳費";await upd(caseNo,patch,btn)}
 function renderTables(){let headEl=$("#billingHead"),rowsEl=$("#billingRows");if(!headEl||!rowsEl)return;let head="<tr><th>案件編號</th><th>日期</th><th>單位/申請人</th><th>空間</th><th>計價單位</th><th>核定應繳金額（學校收款）</th><th>折扣</th><th>狀態</th><th>審核</th></tr>";headEl.innerHTML=head;rowsEl.innerHTML=data.map(rowHtml).join("");bindAdminRows()}
 function rowHtml(x){let status=normalizeStatus(x.status),rooms=normalizeRooms(x.rooms).join("、");return`<tr><td><b>${esc(x.caseNo||"")}</b></td><td>${esc(x.startDate)}<br><span class="muted">${esc(usageTimeRange(x))}</span></td><td><b>${esc(x.unit)}</b><br>${esc(x.applicant)}<br><span class="muted">${esc(x.email)}｜${esc(x.phone)}</span></td><td>${esc(rooms)}</td><td>${halfDayLabel(x.periods||getHalfDayCount(x.startTime,x.endTime))}</td><td>${money(paymentNoticeFeeBreakdown(x).schoolAmount)}</td><td>${esc(normalizeDiscount(x.discount))}<br><button type="button" class="ghost" data-review-fee="${esc(x.caseNo)}">查看費用</button></td><td><span class="badge ${status}">${statusBadgeText(status)}</span></td><td><textarea data-opinion="${esc(x.caseNo)}" rows="2" placeholder="承辦人/主任審核意見">${esc(x.handlerOpinion||"")}</textarea></td></tr>`}
 function bindAdminRows(){$$("[data-review-fee]").forEach(el=>el.onclick=()=>{setActiveCaseNo(el.dataset.reviewFee);show("allCases")});$$("[data-opinion]").forEach(el=>el.onchange=()=>upd(el.dataset.opinion,{handlerOpinion:el.value,actor:"後台管理者"}))}
@@ -1869,6 +1869,29 @@ function renderCaseOverview(){
  bindReviewCenter();
 }
 
+
+
+function proxyRepairPanelHtml(x) {
+  if (!['主任核准','待繳費','已繳費','活動完成','已結案'].includes(normalizeStatus(x.status))) return '';
+  const doc=latestDocument(x,'approvedApplicationForm');
+  if(doc && doc.approvalStage==='approved' && doc.status!=='needsRegeneration') return '';
+  return `<section class="detail-section wide"><h3>代主任核准簽章補正</h3><p>適用於主任已同意、後台已核准，但申請表缺少主任章的案件。保留原承辦簽章，記錄本次操作人及補正時間，並產生新版申請表。</p><button type="button" class="ghost" onclick="approveByProxy('${esc(x.caseNo)}',this,true)">補正代主任核准簽章</button></section>`;
+}
+async function approveByProxy(caseNo,btn,repair=false) {
+  caseNo=ensureOperationCase(caseNo,'approveByProxy',btn);if(!caseNo)return;
+  const note=prompt((repair?'補正案件 '+caseNo+' 的主任簽章':'代主任核准案件 '+caseNo)+'\n請填寫主任同意目前核定內容的依據，例如：主任於何日以電話、Email 或口頭同意。\n會記錄您的帳號及本次操作時間，不會冒記為主任本人操作。');
+  if(note===null)return;
+  if(!note.trim()||note.trim().length>1000){showSubmissionDialog('尚未完成確認','請填寫 1–1000 字的代核准依據。','PROXY_APPROVAL');return;}
+  if(!confirm('案件：'+caseNo+'\n確認主任已同意目前核定內容，並授權您代為核准？\n系統將產生含承辦章及主任章的申請表。'))return;
+  await runBusyAction('proxyApproval:'+caseNo,btn,'產生雙章申請表中…',async()=>{
+    try{
+      const res=await api('approveDirectorByProxy',{adminToken,caseNo,repair,confirmDirectorApproved:true,authorizationNote:note.trim()});
+      if(!res.ok)throw new Error(res.error||'代核准未完成');
+      await refreshAdmin();renderAll();
+      showSubmissionDialog('代核准處理結果',res.message+(res.warning?'\n'+res.warning:'\n請在申請表區查看最新版本。'),'PROXY_APPROVAL_RESULT');
+    }catch(err){showSubmissionDialog('請確認處理結果',err.message+'\n若連線中斷，請先重新載入案件，確認簽章與文件版本後再操作。','PROXY_APPROVAL_ERROR');}
+  },{message:'記錄簽章並產生申請表，請稍候……'});
+}
 
 function closurePanelHtml(x){
  const c=x.closure;if(!c)return '<section class="detail-section wide"><p class="muted">結案檢查需搭配本次後端更新。</p></section>';
