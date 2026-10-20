@@ -25,7 +25,7 @@ table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;bor
 /* 2026-10-19 overview and persistent submission outcomes */
 .overview-list button,.submission-outcome [data-copy-outcome],#backToOverview{border:1px solid var(--line,#dce4e8);background:white;padding:10px 14px;border-radius:8px;cursor:pointer}#dashboard .case-toolbar{margin-top:20px}
 .review-center{display:block}.overview-list{overflow-x:auto;margin-top:16px}.overview-table{width:100%;border-collapse:collapse;text-align:left}.overview-table th,.overview-table td{padding:14px 12px;border-bottom:1px solid var(--line,#dce4e8);vertical-align:top}.overview-table th{white-space:nowrap}.overview-table td:nth-child(2){max-width:340px;overflow-wrap:anywhere}.case-summary{position:static}.case-facts{grid-template-columns:repeat(2,minmax(0,1fr))}.submission-outcome{position:fixed;inset:0;background:#10233199;z-index:100000;display:flex;align-items:center;justify-content:center;padding:16px}.submission-outcome-box{background:white;color:#172b38;border-radius:16px;padding:28px;width:680px;max-width:100%;max-height:90dvh;overflow:auto;font-size:18px;line-height:1.7;box-shadow:0 12px 40px #0004}.submission-outcome h2{font-size:25px;line-height:1.4}.submission-outcome pre{white-space:pre-wrap;font:inherit;background:#f3f6f8;padding:12px;font-size:15px}.outcome-body{white-space:pre-line}.submission-outcome button{min-height:48px;font-size:17px}.submission-outcome [data-copy-status]:empty{display:none}@media(max-width:640px){.submission-outcome-box{padding:20px;font-size:18px}.submission-outcome .actions{display:flex;flex-direction:column}.overview-table{min-width:620px}.case-facts{grid-template-columns:1fr}}
-</style>
+ .case-search-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px}.case-search-row select{width:auto;max-width:100%}.case-search-row input{width:280px;max-width:100%}</style>
 <style>
 .settings-picker{border:1px solid var(--line);border-radius:8px;background:#fbfdfe;padding:14px;margin-bottom:16px;display:grid;grid-template-columns:minmax(260px,420px) 1fr;gap:12px;align-items:end}
 .settings-picker label{margin:0}
@@ -262,7 +262,7 @@ table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;bor
     <div class="case-toolbar">
       <div class="filterbar" id="caseFilterBar"></div>
       <div class="case-search-row">
-        <label for="caseSearchInput">搜尋案件</label>
+        <label for="caseSort">排序方式</label><select id="caseSort" aria-label="排序方式"><option value="applyDesc">申請日期：新到舊</option><option value="applyAsc">申請日期：舊到新</option><option value="eventAsc">活動日期：近到遠</option><option value="eventDesc">活動日期：遠到近</option><option value="status">案件狀態</option></select><button type="button" id="refreshOverview" class="ghost">重新載入案件</button><label for="caseSearchInput">搜尋案件</label>
         <input type="search" id="caseSearchInput" placeholder="搜尋案件編號、申請人或單位">
       </div>
     </div>
@@ -542,6 +542,7 @@ let activeCaseNo="";
 let adminActionLocked=false;
 let currentCaseFilter="全部";
 let caseSearchTerm="";
+let overviewPage=1,overviewSort="applyDesc";const overviewPageSize=10;
 let lastQueriedCase=null;
 let lastQueryEmail="";
 let changingPaymentCaseNo=null;
@@ -1268,7 +1269,7 @@ function emailHistoryHtml(x){
 
 function timelineHtml(x){let events=[...(Array.isArray(x.timeline)?x.timeline:[]),...(paymentRecord(x).timeline||[])];if(!events.length&&normalizeStatus(x.status)==="待主任核定")events=[{date:"-",time:"",status:"完成承辦審核",actor:"承辦人"},{date:"-",time:"",status:"送主任核定",actor:"承辦人"}];if(!events.length)events=[{date:"-",time:"",status:normalizeStatus(x.status),actor:"系統"}];return events.map(e=>`<div class="stage active"><span><b>${esc(timelineDisplayStatus(e.status||""))}</b><br><span class="muted">${esc(e.date||"")} ${esc(e.time||"")}｜操作人：${esc(e.actor||"未記錄")}</span></span></div>`).join("")}
 function actionLogsHtml(x){let logs=Array.isArray(x.actionLogs)?x.actionLogs:[];return logs.length?logs.map(e=>`<div class="stage active"><span><b>${esc(e.action||"")}</b><br><span class="muted">${esc(e.date||"")} ${esc(e.time||"")}｜操作人：${esc(e.actor||"未記錄")}</span></span></div>`).join(""):"<p class='muted'>尚無操作紀錄。</p>"}
-function bindReviewCenter(){const back=$("#backToOverview");if(back)back.onclick=async()=>{if(adminActionLocked)return;await show("dashboard");window.scrollTo(0,overviewScrollY);};$$("[data-close-case]").forEach(b=>b.onclick=()=>confirmCaseClosure(b));initTimeSelects();$$("[data-case-filter]").forEach(el=>el.onclick=()=>{if(adminActionLocked){toast("案件處理中，請等待完成後再切換案件。");return}currentCaseFilter=el.dataset.caseFilter;renderReviewCenter()});let search=$("#caseSearchInput");if(search)search.oninput=()=>{if(adminActionLocked)return;caseSearchTerm=search.value;renderReviewCenter()};$$("[data-select-case]").forEach(el=>el.onclick=()=>{if(adminActionLocked){toast("案件處理中，請等待完成後再切換案件。");return}overviewScrollY=window.scrollY;setActiveCaseNo(el.dataset.selectCase);show("allCases");window.scrollTo(0,0)});$$("[data-copy-case]").forEach(el=>el.onclick=()=>copyCaseNo(el.dataset.copyCase));$$("[data-workflow]").forEach(el=>el.onclick=()=>updateWorkflow(null,el.dataset.nextStatus,el));$$("[data-billing-method]").forEach(el=>el.onchange=()=>applyBillingMethod(activeCaseNo,el.value));$$("[data-approved-amount]").forEach(el=>el.oninput=()=>markApprovalDirty(activeCaseNo));$$("[data-save-billing]").forEach(el=>el.onclick=()=>saveBillingAmount(null,el));$$("[data-send-director]").forEach(el=>el.onclick=()=>sendDirectorAfterSave(null,el));$$("[data-resend-director]").forEach(el=>el.onclick=()=>resendDirectorReviewNotification(el.dataset.resendDirector||activeCaseNo,el));$$("[data-save-revision]").forEach(el=>el.onclick=()=>saveCaseRevision(el.dataset.saveRevision||activeCaseNo,el));$$("[data-toggle-fee-adjustment]").forEach(el=>el.onclick=()=>{adjustingFeeCaseNo=adjustingFeeCaseNo===activeCaseNo?"":activeCaseNo;renderReviewCenter()});$$("[data-cancel-fee-adjustment]").forEach(el=>el.onclick=()=>{adjustingFeeCaseNo="";renderReviewCenter()});$$("[data-add-fee-adjustment]").forEach(el=>el.onclick=()=>addFeeAdjustment(activeCaseNo,el));$$("[data-void-fee-adjustment]").forEach(el=>el.onclick=()=>voidFeeAdjustment(activeCaseNo,el.dataset.adjustmentId,el));$$("[data-handler-opinion]").forEach(el=>el.onchange=()=>upd(activeCaseNo,{handlerOpinion:el.value,actor:"後台管理者"}));$$("[data-director-opinion]").forEach(el=>el.onchange=()=>upd(activeCaseNo,{directorOpinion:el.value,actor:"後台管理者"}));$$("[data-return-reason]").forEach(el=>el.onchange=()=>upd(activeCaseNo,{returnReason:el.value,actor:"後台管理者"}));bindAiReviewControls();bindTeachingBenefitCaseControls();bindSupplementControls();bindPaymentControls()}
+function bindReviewCenter(){const back=$("#backToOverview");if(back)back.onclick=async()=>{if(adminActionLocked)return;await show("dashboard",{reuseLoaded:true});window.scrollTo(0,overviewScrollY);};if($("#dashboard")?.classList.contains("active")){bindOverviewControls();return;}$$("[data-close-case]").forEach(b=>b.onclick=()=>confirmCaseClosure(b));initTimeSelects();$$("[data-case-filter]").forEach(el=>el.onclick=()=>{if(adminActionLocked){toast("案件處理中，請等待完成後再切換案件。");return}currentCaseFilter=el.dataset.caseFilter;renderReviewCenter()});let search=$("#caseSearchInput");if(search)search.oninput=()=>{if(adminActionLocked)return;caseSearchTerm=search.value;renderReviewCenter()};$$("[data-select-case]").forEach(el=>el.onclick=()=>{if(adminActionLocked){toast("案件處理中，請等待完成後再切換案件。");return}overviewScrollY=window.scrollY;setActiveCaseNo(el.dataset.selectCase);show("allCases");window.scrollTo(0,0)});$$("[data-copy-case]").forEach(el=>el.onclick=()=>copyCaseNo(el.dataset.copyCase));$$("[data-workflow]").forEach(el=>el.onclick=()=>updateWorkflow(null,el.dataset.nextStatus,el));$$("[data-billing-method]").forEach(el=>el.onchange=()=>applyBillingMethod(activeCaseNo,el.value));$$("[data-approved-amount]").forEach(el=>el.oninput=()=>markApprovalDirty(activeCaseNo));$$("[data-save-billing]").forEach(el=>el.onclick=()=>saveBillingAmount(null,el));$$("[data-send-director]").forEach(el=>el.onclick=()=>sendDirectorAfterSave(null,el));$$("[data-resend-director]").forEach(el=>el.onclick=()=>resendDirectorReviewNotification(el.dataset.resendDirector||activeCaseNo,el));$$("[data-save-revision]").forEach(el=>el.onclick=()=>saveCaseRevision(el.dataset.saveRevision||activeCaseNo,el));$$("[data-toggle-fee-adjustment]").forEach(el=>el.onclick=()=>{adjustingFeeCaseNo=adjustingFeeCaseNo===activeCaseNo?"":activeCaseNo;renderReviewCenter()});$$("[data-cancel-fee-adjustment]").forEach(el=>el.onclick=()=>{adjustingFeeCaseNo="";renderReviewCenter()});$$("[data-add-fee-adjustment]").forEach(el=>el.onclick=()=>addFeeAdjustment(activeCaseNo,el));$$("[data-void-fee-adjustment]").forEach(el=>el.onclick=()=>voidFeeAdjustment(activeCaseNo,el.dataset.adjustmentId,el));$$("[data-handler-opinion]").forEach(el=>el.onchange=()=>upd(activeCaseNo,{handlerOpinion:el.value,actor:"後台管理者"}));$$("[data-director-opinion]").forEach(el=>el.onchange=()=>upd(activeCaseNo,{directorOpinion:el.value,actor:"後台管理者"}));$$("[data-return-reason]").forEach(el=>el.onchange=()=>upd(activeCaseNo,{returnReason:el.value,actor:"後台管理者"}));bindAiReviewControls();bindTeachingBenefitCaseControls();bindSupplementControls();bindPaymentControls()}
 function bindPaymentControls(){$$("[data-confirm-payment]").forEach(el=>el.onclick=()=>confirmPaymentChoice(el.dataset.confirmPayment,el.dataset.paymentChange==="true",el));$$("[data-change-payment]").forEach(el=>el.onclick=()=>{changingPaymentCaseNo=el.dataset.changePayment;renderQueryResult(lastQueriedCase)});$$("[data-cancel-payment-change]").forEach(el=>el.onclick=()=>{changingPaymentCaseNo=null;renderQueryResult(lastQueriedCase)});$$("[data-cancel-application]").forEach(el=>el.onclick=()=>openCancelApplicationModal(el.dataset.cancelApplication));$$("[data-review-cancel]").forEach(el=>el.onclick=()=>reviewCancelApplication(el.dataset.reviewCancel,el.dataset.cancelDecision,el));$$("[data-front-attach],[data-admin-attach]").forEach(el=>el.onchange=()=>{let file=el.files?.[0];if(file)saveAttachment(el.dataset.frontAttach||el.dataset.adminAttach,el.dataset.attachType,file)});$$("[data-attachment-status]").forEach(el=>el.onclick=()=>setAttachmentStatus(el.dataset.attachmentStatus,el.dataset.attachType,el.dataset.attachStatus,el));$$("[data-confirm-paid]").forEach(el=>el.onclick=()=>confirmPaid(el.dataset.confirmPaid,el));$$("[data-save-remittance]").forEach(el=>el.onclick=()=>saveRemittanceInfo(el.dataset.saveRemittance,el));$$("[data-generate-payment-notice]").forEach(el=>el.onclick=()=>generatePaymentNotice(el.dataset.generatePaymentNotice,el));$$("[data-generate-approved-application]").forEach(el=>el.onclick=()=>generateApprovedApplicationForm(el.dataset.generateApprovedApplication,el));$$("[data-send-payment-notice]").forEach(el=>el.onclick=()=>sendPaymentNoticeEmail(el.dataset.sendPaymentNotice,el));$$("[data-copy-bank-account]").forEach(el=>el.onclick=()=>copyText(bankAccountNo,"已複製帳號"));$$("[data-copy-bank-info]").forEach(el=>el.onclick=()=>copyText(bankTransferInfoText,"已複製匯款資訊"))}
 async function reviewCancelApplication(caseNo,decision,btn){let rejectReason="";if(decision==="reject"){rejectReason=prompt("請填寫不同意原因")||"";if(!rejectReason.trim()){toast("請填寫不同意原因");return}}await runBusyAction(`reviewCancel:${caseNo}:${decision}`,btn,"處理中…",async()=>{try{let res=await api("reviewCancelApplication",{adminToken,caseNo,decision,rejectReason,actor:"承辦人"});if(!res.ok)throw new Error(res.error||"取消審核失敗");await refreshAdmin();renderReviewCenter();toast(decision==="approve"?"已同意取消借用":"已不同意取消借用")}catch(err){toast(err.message)}}, {message:"處理取消審核中，請稍候……"})}
 function feeAdjustmentNeedsConfirm(x){return["已繳費","活動完成","已結案","已退件","申請者取消"].includes(normalizeStatus(x.status))}
@@ -1744,7 +1745,7 @@ async function rosterAutoLoad(){const key=adminToken+':'+teachingBenefitYear;if(
 
 let navigationRevision=0,settingsLoadRevision=0;
 const settingsBusyControls=new WeakMap();
-async function show(id){
+async function show(id,options={}){
  if(isAdminView(id)&&(!admin||!adminMode))id=admin?'home':'loginView';
  const revision=++navigationRevision;
  $$('.view').forEach(v=>v.classList.toggle('active',v.id===id));
@@ -1758,6 +1759,7 @@ async function show(id){
  }
  if(id==='settings'){await loadSelectedSettingsSection(currentSettingsSection());return;}
  if(isAdminView(id)){
+  if(options.reuseLoaded&&id==='dashboard'){renderAll();return;}
   if(data.length)renderAll();
   if(id==='bookingCalendar')await Promise.all([loadBookingConfig(),refreshAdmin({join:true})]);else await refreshAdmin({join:true});
   if(current()&&admin)renderAll();
@@ -1838,11 +1840,36 @@ document.addEventListener('change',async e=>{
 });
 
 let overviewScrollY=0;
+function sortedOverviewCases(){
+ const dateKey=value=>{const text=String(value||'').trim().replaceAll('/','-');const match=text.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);return match?match[1]+match[2].padStart(2,'0')+match[3].padStart(2,'0'):'';};
+ const ranks=['已送件','承辦審核中','待補件','補件完成','承辦修正中','待主任核定','待取消審核','主任核准','待繳費','已繳費','活動完成','已結案','已退件','申請者取消'];
+ const dateCompare=(a,b,desc)=>{if(!a||!b)return a? -1:b?1:0;return a.localeCompare(b)*(desc?-1:1)};
+ return filteredCases().slice().sort((a,b)=>{
+  let diff=0;
+  if(overviewSort==='status'){const ra=ranks.indexOf(normalizeStatus(a.status)),rb=ranks.indexOf(normalizeStatus(b.status));diff=(ra<0?99:ra)-(rb<0?99:rb);}
+  else {const event=overviewSort.startsWith('event');diff=dateCompare(dateKey(event?a.startDate:a.applyDate),dateKey(event?b.startDate:b.applyDate),overviewSort.endsWith('Desc'));}
+  return diff||String(b.caseNo||'').localeCompare(String(a.caseNo||''),undefined,{numeric:true});
+ });
+}
+function bindOverviewControls(){
+ const rerender=()=>{overviewPage=1;renderCaseOverview();};
+ $$('#caseFilterBar [data-case-filter]').forEach(el=>el.onclick=()=>{if(adminActionLocked)return;currentCaseFilter=el.dataset.caseFilter;rerender();});
+ const search=$('#caseSearchInput');if(search)search.oninput=()=>{if(adminActionLocked)return;caseSearchTerm=search.value;rerender();};
+ const sort=$('#caseSort');sort.value=overviewSort;sort.disabled=adminActionLocked;sort.onchange=()=>{if(adminActionLocked)return;overviewSort=sort.value;rerender();};
+ const refresh=$('#refreshOverview');refresh.disabled=adminActionLocked;refresh.onclick=async()=>{if(adminActionLocked||refresh.disabled)return;refresh.disabled=true;refresh.textContent='載入中…';try{await refreshAdmin({join:true});if($('#dashboard')?.classList.contains('active'))renderAll();}finally{refresh.disabled=false;refresh.textContent='重新載入案件';}};
+ $$('#caseListPanel [data-overview-page]').forEach(el=>el.onclick=()=>{if(adminActionLocked)return;overviewPage=Number(el.dataset.overviewPage);renderCaseOverview();$('#caseListPanel').scrollIntoView({block:'start'});});
+ $$('#caseListPanel [data-select-case]').forEach(el=>el.onclick=()=>{if(adminActionLocked)return;overviewScrollY=window.scrollY;setActiveCaseNo(el.dataset.selectCase);show('allCases');window.scrollTo(0,0);});
+}
 function renderCaseOverview(){
  renderCaseFilters();const list=$('#caseListPanel');if(!list)return;
- const cases=filteredCases();list.innerHTML=cases.length?`<table class="overview-table"><thead><tr><th>案件編號</th><th>申請人／單位</th><th>活動日期</th><th>案件狀態</th><th>操作</th></tr></thead><tbody>${cases.map(x=>`<tr><td>${esc(x.caseNo)}</td><td>${esc(x.applicant||'')}<br><span class="muted">${esc(x.unit||'')}</span></td><td>${esc(x.startDate||'')} ${x.endDate!==x.startDate?'～ '+esc(x.endDate||''):''}<br>${esc(usageTimeRange(x))}</td><td>${statusBadgeText(normalizeStatus(x.status))}${x.closure?.ready?'<br><small>可確認結案</small>':''}</td><td><button type="button" data-select-case="${esc(x.caseNo)}" ${adminActionLocked?'disabled':''}>查看案件</button></td></tr>`).join('')}</tbody></table>`:'<p class="muted">沒有符合條件的案件。</p>';
+ const cases=sortedOverviewCases(),pages=Math.max(1,Math.ceil(cases.length/overviewPageSize));overviewPage=Math.min(pages,Math.max(1,overviewPage));
+ const offset=(overviewPage-1)*overviewPageSize,pageCases=cases.slice(offset,offset+overviewPageSize);
+ list.innerHTML=cases.length?`<table class="overview-table"><thead><tr><th>案件編號</th><th>申請人／單位</th><th>活動日期</th><th>案件狀態</th><th>操作</th></tr></thead><tbody>${pageCases.map(x=>`<tr><td>${esc(x.caseNo)}</td><td>${esc(x.applicant||'')}<br><span class="muted">${esc(x.unit||'')}</span></td><td>${esc(x.startDate||'')} ${x.endDate!==x.startDate?'～ '+esc(x.endDate||''):''}<br>${esc(usageTimeRange(x))}</td><td>${statusBadgeText(normalizeStatus(x.status))}${x.closure?.ready?'<br><small>可確認結案</small>':''}</td><td><button type="button" data-select-case="${esc(x.caseNo)}" ${adminActionLocked?'disabled':''}>查看案件</button></td></tr>`).join('')}</tbody></table>`:'<p class="muted">沒有符合條件的案件。</p>';
+ list.insertAdjacentHTML('beforeend',`<div class="actions" aria-label="案件分頁" style="flex-wrap:wrap;margin-top:16px"><span role="status">顯示第 ${cases.length?offset+1:0}–${Math.min(offset+10,cases.length)} 筆，共 ${cases.length} 筆</span><button type="button" class="ghost" data-overview-page="${overviewPage-1}" ${overviewPage===1||adminActionLocked?'disabled':''}>上一頁</button><span>第 ${overviewPage}／${pages} 頁</span><button type="button" class="ghost" data-overview-page="${overviewPage+1}" ${overviewPage===pages||adminActionLocked?'disabled':''}>下一頁</button></div>`);
  bindReviewCenter();
 }
+
+
 function closurePanelHtml(x){
  const c=x.closure;if(!c)return '<section class="detail-section wide"><p class="muted">結案檢查需搭配本次後端更新。</p></section>';
  if(c.closed)return '<section class="detail-section wide"><h3>結案管理</h3><p>本案已結案，原收款與追加費用紀錄保留供查閱。</p></section>';
