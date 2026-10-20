@@ -310,9 +310,18 @@ table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;bor
   </section>
   <section class="panel">
     <div class="head"><h2>場地不外借管理</h2><span class="muted">不外借資料儲存於後端，跨裝置同步</span></div>
+    <p class="muted">相同日期、時間與原因可一次套用多間場地。國定假日仍可外借；請至「系統設定 → 校曆」設定非上班日，以計算預估值班費，不需在此新增不外借。每個日期、每間場地各計 1 筆，一次最多 365 筆；新增後可逐筆刪除。</p>
     <form id="blockForm" class="grid">
       <label>開始日期<input type="date" name="date" required></label>
-      <label>場地<select name="room" required><option>多功能外科指導手術室</option><option>419教室</option><option>420教室</option></select></label>
+      <fieldset class="block-room-picker" style="min-width:0;margin:0;border:1px solid #dce5ec;border-radius:8px;padding:12px"><legend>不外借場地（可複選）</legend>
+        <label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="blockSelectAll" style="width:auto">全部場地</label>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:8px">
+          <label style="display:flex;align-items:center;gap:8px"><input type="checkbox" name="blockRooms" value="多功能外科指導手術室" style="width:auto">多功能外科指導手術室</label>
+<label style="display:flex;align-items:center;gap:8px"><input type="checkbox" name="blockRooms" value="419教室" style="width:auto">419教室</label>
+<label style="display:flex;align-items:center;gap:8px"><input type="checkbox" name="blockRooms" value="420教室" style="width:auto">420教室</label>
+        </div>
+        <p id="blockRoomSelection" class="muted" role="status">請勾選至少一間場地。</p>
+      </fieldset>
       <label>開始時間<select name="startTime" data-time-select data-selected="08:00" required></select></label>
       <label>結束時間<select name="endTime" data-time-select data-selected="12:00" required></select></label>
       <label>重複頻率<select name="repeat"><option value="once">單次</option><option value="daily">每天</option><option value="weekly">每週</option><option value="monthly">每月</option></select></label>
@@ -362,7 +371,7 @@ table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;bor
       </section>
       <section class="detail-section wide" data-settings-section="schoolCalendar">
         <h3>學校行事曆設定</h3>
-        <p class="muted">用於判定工作人員值班費。未設定日期預設為週一至週五上班日、週六日非上班日；若有補班或校定放假，請在此新增特殊日期。</p>
+        <p class="muted">校曆只用於計算預估工作人員值班費，不會阻擋租借申請。國定假日仍可外借，請設為「非上班日」。未設定日期預設為週一至週五上班日、週六日非上班日；補班請設為「上班日」。目前由承辦人維護，尚未串接 Google 行事曆。已保存案件不會因校曆更新而自動改價，請另行確認核定費用。</p>
         <form id="schoolCalendarForm" class="grid">
           <label>日期<input type="date" name="calendarDate" required></label>
           <label>日別<select name="dayType"><option>上班日</option><option>非上班日</option></select></label>
@@ -615,6 +624,8 @@ function bind(){
  $("#settingsSectionSelect").onchange=e=>selectSettingsSection(e.target.value);
  $("#schoolCalendarForm").onsubmit=saveSchoolCalendarDate;
  $("#blockForm").onsubmit=addRoomBlock;
+ $("#blockSelectAll").onchange=e=>{$$('#blockForm input[name="blockRooms"]').forEach(input=>input.checked=e.target.checked);updateBlockRoomSelection()};
+ $$('#blockForm input[name="blockRooms"]').forEach(input=>input.onchange=updateBlockRoomSelection);
  $("#blockForm select[name='repeat']").onchange=updateBlockRepeatFields;
  $("#blockForm input[name='date']").onchange=updateBlockRepeatFields;
  $("#goRoomBlockSettingsBtn").onclick=()=>show("bookingCalendar");
@@ -731,15 +742,21 @@ function addMonthsKeepingDay(date,months,day){let d=new Date(date);d.setMonth(d.
 function repeatLabel(freq){return{once:"單次",daily:"每天",weekly:"每週",monthly:"每月"}[freq]||"單次"}
 function updateBlockRepeatFields(){let form=$("#blockForm");if(!form)return;let repeat=form.elements.repeat?.value||"once",start=form.elements.date?.value||today(),until=form.elements.repeatUntil;if(!until)return;until.min=start;until.disabled=repeat==="once";until.required=repeat!=="once";if(repeat==="once"||!until.value||until.value<start)until.value=start}
 function buildRepeatedBlockDates(startDate,repeat,untilDate){let start=new Date(startDate+"T00:00:00"),until=new Date((untilDate||startDate)+"T00:00:00");if(Number.isNaN(start.getTime()))return[];if(repeat==="once")return[fmtDate(start)];if(Number.isNaN(until.getTime())||until<start)return[];let dates=[],cursor=new Date(start),originalDay=start.getDate(),guard=0;while(cursor<=until&&guard<366){dates.push(fmtDate(cursor));guard++;if(repeat==="daily")cursor=new Date(cursor.getTime()+86400000);else if(repeat==="weekly")cursor=new Date(cursor.getTime()+86400000*7);else if(repeat==="monthly")cursor=addMonthsKeepingDay(cursor,1,originalDay);else break}return dates}
+function updateBlockRoomSelection(){
+ const inputs=$$('#blockForm input[name="blockRooms"]'),count=inputs.filter(input=>input.checked).length,all=$("#blockSelectAll");
+ all.checked=count===inputs.length;all.indeterminate=count>0&&count<inputs.length;
+ $("#blockRoomSelection").textContent=count?'已選 '+count+' 間場地。':'請勾選至少一間場地。';
+}
 async function addRoomBlock(e){
  e.preventDefault();const form=e.target,f=new FormData(form),repeat=f.get('repeat')||'once',date=f.get('date'),until=f.get('repeatUntil')||date;
- const dates=buildRepeatedBlockDates(date,repeat,until),startTime=f.get('startTime'),endTime=f.get('endTime');
- if(!dates.length||dates.length>365||toMinutes(endTime)<=toMinutes(startTime)){toast('請確認日期範圍與起訖時間，一次最多 365 筆。');return}
- const blocks=dates.map(date=>({date,room:f.get('room'),startTime,endTime,reason:f.get('reason'),repeat,repeatLabel:repeatLabel(repeat),repeatUntil:until}));
+ const dates=buildRepeatedBlockDates(date,repeat,until),startTime=f.get('startTime'),endTime=f.get('endTime'),rooms=f.getAll('blockRooms');
+ if(!rooms.length){updateBlockRoomSelection();$('#blockSelectAll').focus();return}
+ if(!dates.length||dates.length*rooms.length>365||toMinutes(endTime)<=toMinutes(startTime)){toast('請確認日期範圍與起訖時間。日期數 × 場地數一次最多 365 筆，請縮短日期範圍後分批新增。');return}
+ const blocks=dates.flatMap(date=>rooms.map(room=>({date,room,startTime,endTime,reason:f.get('reason'),repeat,repeatLabel:repeatLabel(repeat),repeatUntil:until}))); 
  await runBusyAction('addRoomBlocks',e.submitter,'儲存中…',async()=>{try{
   const res=await api('addRoomBlocks',{adminToken,blocks});if(!res.ok)throw new Error(res.error||'場地封鎖未儲存。');
   roomBlocks=res.blocks;invalidateCalendarCaches();renderBlockList();renderBookingCalendar();
-  form.reset();form.elements.date.value=today();form.elements.repeatUntil.value=today();updateBlockRepeatFields();toast('已新增 '+res.added+' 筆場地不外借（跨裝置同步）。');
+  form.reset();form.elements.date.value=today();form.elements.repeatUntil.value=today();updateBlockRepeatFields();updateBlockRoomSelection();toast('已新增 '+res.added+' 筆場地不外借（跨裝置同步）。');
  }catch(err){toast(err.message)}});
 }
 
