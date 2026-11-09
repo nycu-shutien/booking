@@ -4,9 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>書田外科訓練中心預借系統</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
 <style>
+.booking-notice{line-height:1.8}.booking-notice p:last-child{margin-bottom:0}.agree input{flex-shrink:0}
+
 :root{--ink:#17212b;--muted:#637487;--line:#d9e3ea;--bg:#f5f7fa;--panel:#fff;--teal:#0e7c7b;--blue:#2f6fbb;--red:#b64444;--green:#27784d;--amber:#a96d10;--side:#102333}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Microsoft JhengHei",Arial,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","Source Han Sans TC","Microsoft JhengHei",Arial,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}
 .shell{display:grid;grid-template-columns:260px 1fr;min-height:100vh}.side{background:var(--side);color:#fff;padding:22px;display:flex;flex-direction:column;gap:22px}.brand{display:grid;justify-items:center;text-align:center;gap:12px;padding:2px 4px 8px}.mark{width:46px;height:46px;border-radius:8px;background:#e8f6f4;color:var(--teal);display:grid;place-items:center;font-weight:900}.brand-text{display:grid;gap:8px}.brand-title{font-size:16px;line-height:1.35;font-weight:900}.brand-unit,.side-footer{color:#b6c6d5;font-size:11px;line-height:1.6}.brand span,.muted{color:var(--muted);font-size:13px}.side .brand span,.login span{color:#b6c6d5}.nav{display:grid;gap:7px}.nav button,.ghost,.primary,.icon{border:1px solid transparent;border-radius:8px;min-height:40px;padding:0 14px}.nav button{background:transparent;color:#dce8f2;text-align:left}.nav button.active,.nav button:hover{background:#20394d;color:#fff}.nav h3{margin:18px 0 5px;color:#9db1c2;font-size:12px;font-weight:700;letter-spacing:.06em}.nav h3:first-child{margin-top:0}.side-footer{margin-top:auto;text-align:center;padding-top:18px}.login{margin-top:auto;border:1px solid #ffffff24;border-radius:8px;padding:14px;display:grid;gap:10px}a.ghost,a.primary{display:inline-flex;align-items:center;text-decoration:none}
 .main{padding:26px}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:20px}.eyebrow{margin:0 0 4px;color:var(--muted);font-size:13px}h1,h2,h3,p{margin-top:0}h1{font-size:28px;margin-bottom:0}h2{font-size:20px;margin-bottom:0}.primary{background:var(--teal);border-color:var(--teal);color:#fff;font-weight:700}.ghost,.icon{background:#fff;border-color:var(--line);color:var(--ink)}.danger{color:var(--red);border-color:#e7caca}.icon{width:42px;padding:0}.hide{display:none!important}.user-menu{position:relative}.user-menu-list{position:absolute;right:0;top:46px;z-index:12;min-width:180px;background:#fff;border:1px solid var(--line);border-radius:8px;box-shadow:0 12px 30px #1023331f;padding:6px;display:grid;gap:4px}.user-menu-list button{border:0;background:#fff;text-align:left;border-radius:6px;min-height:38px;padding:0 10px}.user-menu-list button:hover{background:#eef8f7}
 .view{display:none}.view.active{display:grid;gap:18px}.hero{position:relative;min-height:230px;border-radius:8px;overflow:hidden;background:linear-gradient(135deg,#d2eef1,#f8fbfb 46%,#214f63)}.hero:before{content:"";position:absolute;inset:auto 0 0;height:95px;background:#10233366}.hero:after{content:"";position:absolute;right:54px;bottom:50px;width:380px;height:78px;border-radius:8px;background:linear-gradient(90deg,#fff,#d9eeee);box-shadow:-90px -34px 0 -10px #ffffffcc,-180px -16px 0 -10px #ffffffcc}.hero div{position:absolute;left:24px;bottom:22px;color:#fff;text-shadow:0 2px 12px #0008}.hero strong{font-size:26px}
@@ -226,17 +231,21 @@ table{width:100%;border-collapse:collapse;min-width:980px}th,td{padding:12px;bor
     <p class="muted">可先上傳附件，或選擇附件後補。支援 PDF、JPG、PNG、DOC、DOCX、XLS、XLSX。</p>
     <div id="applicationAttachmentFields" class="summary"></div><p class="notice">本中心不受理停車優惠申請；停車相關事宜請申請單位自行洽詢校方停車管理單位。</p>
   </div>
-  <div class="notice wide">
-    <h3>📖 借用須知</h3>
-    <p>請於送出申請前確認下列事項：</p>
-    <p><strong>1. 申請與補件</strong><br>請於活動前至少二週提出申請，經中心核准後始得使用。活動議程或計畫書擇一提供，可依中心通知期限後補，補齊後再完成審核；器材需求清單請於活動前一週提供。</p>
-    <p><strong>2. 借用時間</strong><br>借用時間包含進場、場地佈置、活動、器材整理及場地復原至離場的完整時間。延長使用須經中心同意；逾時超過三十分鐘，加收一個時段的場地設備費，工作人員值班費另依規定計收。</p>
-    <p><strong>3. 繳費與結算</strong><br>場地及可事先核定的相關費用，請於活動前一天繳清並上傳繳費證明。工作人員值班費及感染性垃圾處理費依實際情形結算；逾期未繳清者，暫停受理新申請。</p>
-    <p><strong>4. 時段安排</strong><br>原則依申請先後安排。同一時段經協調仍無法調整時，以申請部科教學支援比例較高者優先，已核准案件亦可能調整；比例相同或任一申請單位無法計算比例時，依申請先後安排，線上申請時間以系統紀錄為準。</p>
-    <p><strong>5. 使用責任與取消</strong><br>活動結束後請恢復場地整潔並歸還器材；設備或器材如有損壞、遺失，須負修復或賠償責任。除天災或不可抗力事由外，中途放棄使用，已繳場地費用不予退還。</p>
+  <div class="notice wide booking-notice">
+    <h3>國立陽明交通大學書田外科訓練中心 借用須知</h3>
+    <p>線上申請前請先閱讀並確認下列事項：</p>
+    <p><strong>一、申請與補件：</strong> 請於活動前至少兩週提出申請，經本中心核准後始得使用。活動議程或計畫書可依通知期限後補，補齊後方完成審核。器材需求清單應於活動前一週確認並提供。</p>
+    <p><strong>二、借用時間：</strong> 借用時間須包含進撤場、佈置、預演、活動及復原之完整時間。延長使用須經同意且不影響下個時段；逾時超過 30 分鐘，加收一個時段之場地設備費，值班費另計。</p>
+    <p><strong>三、繳費與結算：</strong> 場地相關費用應於活動前一天繳清並於系統上傳證明。現場工作人員值班費與感染性垃圾處理費依實際情形結算。逾期未繳清者，將暫停受理新申請。</p>
+    <p><strong>四、時段安排：</strong> 依系統紀錄之申請先後順序安排。若同一時段衝突且協調未果，以申請部科之「教學支援比例較高者」優先；若比例相同或無法計算，則依申請先後順序安排。</p>
+    <p><strong>五、場地維護：</strong> 活動結束後應恢復整潔、歸還器材並自行清運佈置物。張貼資料請用不殘膠用品。場地及設備如有損壞或遺失，借用單位須負修復或賠償責任。</p>
+    <p><strong>六、實驗動物：</strong> 動物採購、搬運、清運及麻醉人員由借用單位自行安排。動物限於活動前一天下午進駐，並於活動結束當日自行清運，中心不提供寄養。</p>
+    <p><strong>七、取消使用：</strong> 除天災或不可抗力事由外，中途放棄使用者，已繳納之場地費用概不退還。</p>
+    <p>請參閱詳細法規：<a href="https://nycu-shutien.github.io/booking/docs/Booking_Guidelines_v1.0_fixed.pdf" target="_blank" rel="noopener">國立陽明交通大學書田外科訓練中心使用管理收費辦法</a>｜收費標準附表</p>
   </div>
-  <label class="agree wide"><input type="checkbox" required>本人已詳閱並同意遵守「國立陽明交通大學書田外科訓練中心使用管理收費辦法」、收費標準及借用須知，並確認所填資料正確。</label>
-  <div class="wide"><a class="ghost" href="https://nycu-shutien.github.io/booking/docs/Booking_Guidelines_v1.0_fixed.pdf" target="_blank">📄 查看完整版借用管理規範</a></div>
+  <div class="wide"><strong>【系統確認聲明】</strong></div>
+  <label class="agree wide"><input type="checkbox" required><span><strong>我已閱讀並同意</strong> 遵守「國立陽明交通大學書田外科訓練中心使用管理收費辦法」、收費標準及借用須知，並確認所填資料與附件內容皆正確無誤。</span></label>
+
   <div class="actions wide"><button type="button" class="ghost" data-prev-step>上一步</button><button type="reset" class="ghost">清除</button><button type="submit" class="primary">送出申請</button></div>
 </section>
 </form>
